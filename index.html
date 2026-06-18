@@ -148,9 +148,6 @@
                     <button class="nav-btn admin-only w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all font-medium" data-target="aktivitas">
                         <i class="ph ph-clock-counter-clockwise text-xl"></i> Log Aktivitas
                     </button>
-                    <button class="nav-btn admin-only w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all font-medium" data-target="pengaturan">
-                        <i class="ph ph-gear text-xl"></i> Pengaturan
-                    </button>
                 </nav>
             </aside>
 
@@ -179,22 +176,22 @@
                     </div>
                 </header>
 
-                <!-- Desktop Topbar Toggle & Logout -->
-                <div class="hidden lg:flex justify-end p-4 absolute right-0 top-0 z-10 pointer-events-none gap-2">
-                    <button onclick="navigate('pengaturan')" class="p-2.5 bg-white dark:bg-darkcard text-gray-500 shadow-md border border-gray-100 dark:border-gray-700 rounded-full pointer-events-auto hover:text-primary transition-colors admin-only">
+                <!-- Desktop Topbar & Logout (Static position) -->
+                <div class="hidden lg:flex justify-end px-8 pt-6 pb-2 w-full flex-shrink-0 gap-2">
+                    <button onclick="navigate('pengaturan')" class="p-2.5 bg-white dark:bg-darkcard text-gray-500 shadow-sm border border-gray-100 dark:border-gray-700 rounded-full hover:text-primary transition-colors admin-only">
                         <i class="ph ph-gear text-[22px]"></i>
                     </button>
-                    <button onclick="toggleTheme()" class="p-2.5 bg-white dark:bg-darkcard text-gray-500 shadow-md border border-gray-100 dark:border-gray-700 rounded-full pointer-events-auto hover:text-primary transition-colors">
+                    <button onclick="toggleTheme()" class="p-2.5 bg-white dark:bg-darkcard text-gray-500 shadow-sm border border-gray-100 dark:border-gray-700 rounded-full hover:text-primary transition-colors">
                         <i class="ph ph-moon text-[22px] dark:hidden"></i>
                         <i class="ph ph-sun text-[22px] hidden dark:block"></i>
                     </button>
-                    <button onclick="handleLogout()" class="p-2.5 bg-white dark:bg-darkcard text-danger shadow-md border border-gray-100 dark:border-gray-700 rounded-full pointer-events-auto hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors">
+                    <button onclick="handleLogout()" class="p-2.5 bg-white dark:bg-darkcard text-danger shadow-sm border border-gray-100 dark:border-gray-700 rounded-full hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors">
                         <i class="ph ph-sign-out text-[22px]"></i>
                     </button>
                 </div>
 
                 <!-- Content Views -->
-                <div class="flex-1 overflow-y-auto overflow-x-hidden p-4 lg:p-8 pb-24 lg:pb-8 w-full" id="content-area">
+                <div class="flex-1 overflow-y-auto overflow-x-hidden p-4 lg:px-8 lg:pb-8 lg:pt-2 pb-24 w-full" id="content-area">
                     <!-- Views will be injected here via JS -->
                 </div>
             </main>
@@ -221,10 +218,6 @@
                     <button class="nav-btn-mobile admin-only flex flex-col items-center justify-center p-2 text-gray-400 flex-1 min-w-0" data-target="laporan">
                         <i class="ph ph-file-text text-[20px] mb-1"></i>
                         <span class="text-[9px] font-medium truncate">Laporan</span>
-                    </button>
-                    <button class="nav-btn-mobile admin-only flex flex-col items-center justify-center p-2 text-gray-400 flex-1 min-w-0" data-target="aktivitas">
-                        <i class="ph ph-clock-counter-clockwise text-[20px] mb-1"></i>
-                        <span class="text-[9px] font-medium truncate">Log</span>
                     </button>
                 </div>
             </nav>
@@ -438,6 +431,7 @@
             </div>
 
             <div id="passbook-area" class="hidden flex-1 flex-col gap-4 min-w-0 w-full overflow-y-auto hide-scroll pb-10">
+                <!-- Info Saldo & Identitas -->
                 <div class="flex flex-col md:flex-row gap-4 w-full shrink-0">
                     <div class="bg-gradient-to-br from-primary to-primary-dark p-5 md:p-6 rounded-2xl shadow-md text-white flex-1 relative overflow-hidden h-36 md:h-44">
                         <div class="absolute -right-6 -top-6 opacity-10 pointer-events-none"><i class="ph ph-wallet" style="font-size: 140px;"></i></div>
@@ -459,6 +453,7 @@
                     </div>
                 </div>
 
+                <!-- Riwayat Transaksi Buku Tabungan -->
                 <div class="bg-white dark:bg-darkcard rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 flex-1 overflow-hidden flex flex-col min-w-0" id="pdf-content">
                     <div class="p-3 md:p-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 flex justify-between items-center">
                         <h4 class="font-bold text-sm text-primary flex items-center gap-2"><i class="ph ph-list-bullets text-lg"></i> Tabel Riwayat Mutasi Transaksi</h4>
@@ -475,13 +470,14 @@
                                 </tr>
                             </thead>
                             <tbody id="table-buku" class="divide-y divide-gray-100 dark:divide-gray-800 font-mono bg-white dark:bg-darkcard">
-                                <!-- Injected via JS -->
+                                <!-- Baris transaksi akan dimasukkan di sini oleh JavaScript -->
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
             
+            <!-- Empty State -->
             <div id="passbook-empty" class="flex-1 flex flex-col items-center justify-center text-gray-400 pb-10 text-center px-4">
                 <i class="ph ph-book-open text-6xl mb-4 opacity-50 text-primary"></i>
                 <h3 class="font-bold text-gray-600 dark:text-gray-300 mb-1">Pilih Anggota Terlebih Dahulu</h3>
@@ -513,7 +509,12 @@
         });
 
         // --- APP STATE ---
-        const state = { user: null, data: { anggota: [], transaksi: [], logs: [] }, settings: { gasUrl: localStorage.getItem('gasUrl') || '', theme: localStorage.getItem('theme') || 'light' }, ui: { currentView: 'dashboard' } };
+        const state = { 
+            user: null, 
+            data: { anggota: [], transaksi: [], logs: [] }, 
+            settings: { gasUrl: localStorage.getItem('gasUrl') || '', theme: localStorage.getItem('theme') || 'light' }, 
+            ui: { currentView: 'dashboard' } 
+        };
         const formatRupiah = (angka) => 'Rp ' + Number(angka).toLocaleString('id-ID');
         const formatDateTime = (iso) => iso ? new Date(iso).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour:'2-digit', minute:'2-digit' }) : '-';
         const calculateSaldo = (id) => state.data.transaksi.filter(t=>t['ID Anggota']===id).reduce((sum, t) => t['Jenis Transaksi'] === 'Setoran' ? sum + Number(t['Nominal']) : sum - Number(t['Nominal']), 0);
@@ -554,7 +555,7 @@
             if(res.success) { state.data = res.data; renderCurrentView(); }
         }
 
-        // --- AUTH ---
+        // --- STREAMING_CHUNK:Auth & Navigation Logic... ---
         function handleLogin(e) {
             e.preventDefault(); 
             const u = document.getElementById('login-user').value.trim(); 
@@ -585,7 +586,7 @@
             document.getElementById('main-layout').classList.remove('hidden');
             document.getElementById('role-badge').innerText = state.user.role === 'admin' ? 'Bendahara' : 'Anggota';
             
-            // Menerapkan pembatasan Role melalui Global Body Atribut (Penting untuk menyembunyikan elemen .admin-only)
+            // Menerapkan pembatasan Role melalui Global Body Atribut
             document.body.setAttribute('data-role', state.user.role);
             
             loadData(); 
@@ -598,7 +599,6 @@
             navigate('dashboard'); // reset view
         }
 
-        // --- NAVIGATION ---
         function navigate(viewName) {
             state.ui.currentView = viewName;
             document.querySelectorAll('.nav-btn, .nav-btn-mobile').forEach(btn => {
@@ -626,7 +626,7 @@
             else if(v==='aktivitas'){ renderAktivitas(a); } else if(v==='pengaturan'){ renderPengaturan(a); }
         }
 
-        // --- DASHBOARD (Dinamis: User vs Admin) ---
+        // --- STREAMING_CHUNK:Dashboard & Role Logic... ---
         function renderDashboard() {
             // Dashboard Khusus Anggota (User)
             if (state.user.role === 'user') {
@@ -693,7 +693,7 @@
             }
         }
 
-        // --- ANGGOTA ---
+        // --- STREAMING_CHUNK:Views Component Functions... ---
         function renderAnggota() {
             const tb = document.getElementById('table-anggota');
             const renderTb = (f='') => {
@@ -717,7 +717,6 @@
             document.getElementById('search-anggota').addEventListener('input', e => renderTb(e.target.value));
         }
 
-        // --- TRANSAKSI ---
         function renderTransaksi(filter = 'Semua') {
             const tb = document.getElementById('table-transaksi'); if(!tb) return; tb.innerHTML = '';
             let d = state.data.transaksi; if(filter!=='Semua') d = d.filter(t=>t['Jenis Transaksi']===filter);
@@ -738,7 +737,6 @@
             renderTransaksi(val);
         };
 
-        // --- LAPORAN KEUANGAN ---
         window.renderLaporanData = () => {
             const filter = document.getElementById('filter-waktu').value;
             const tb = document.getElementById('table-laporan');
@@ -802,20 +800,18 @@
             XLSX.writeFile(wb, `Tabungan_RT_${new Date().toISOString().slice(0,10)}.xlsx`); showToast("Excel berhasil diunduh");
         };
 
-        // --- BUKU TABUNGAN (Dinamis: User vs Admin) ---
+        // --- STREAMING_CHUNK:Buku Tabungan & Profil Logic... ---
         function setupBukuTabungan() {
             let sel = document.getElementById('select-buku-anggota');
             sel.innerHTML = '<option value="">-- Silakan Pilih Anggota --</option>';
             
-            // Jika yang login adalah user biasa, paksa pilih id-nya sendiri & sembunyikan selector dropdown
+            // Jika user, paksa id-nya dan sembunyikan dropdown
             if (state.user.role === 'user') {
                 sel.innerHTML = `<option value="${state.user['ID Anggota']}">${state.user['ID Anggota']} - ${state.user['Nama Lengkap']}</option>`;
                 sel.value = state.user['ID Anggota'];
-                document.getElementById('buku-selector-wrapper').classList.add('hidden'); // Sembunyikan search
+                document.getElementById('buku-selector-wrapper').classList.add('hidden');
                 renderBukuTabungan();
-            } 
-            // Jika bendahara, bebas memilih
-            else {
+            } else {
                 document.getElementById('buku-selector-wrapper').classList.remove('hidden');
                 state.data.anggota.forEach(a => sel.innerHTML += `<option value="${a['ID Anggota']}">${a['ID Anggota']} - ${a['Nama Lengkap']}</option>`);
             }
@@ -833,6 +829,7 @@
             document.getElementById('buku-norumah').innerText=a['No Rumah']; document.getElementById('buku-saldo').innerText=formatRupiah(calculateSaldo(id));
             
             let tb = document.getElementById('table-buku'); tb.innerHTML='';
+            
             let trx = state.data.transaksi.filter(t=>t['ID Anggota']===id).sort((x,y)=>new Date(x['Tanggal'])-new Date(y['Tanggal']));
             let sld = 0;
             
@@ -864,7 +861,6 @@
             html2pdf().set({ margin: 10, filename: `Buku_Tabungan.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(el).save();
         };
 
-        // --- AKTIVITAS & PENGATURAN ---
         function renderAktivitas(c){ c.innerHTML = `<div class="p-4 md:p-6 bg-white dark:bg-darkcard rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800"><h3 class="font-bold mb-4">Log Aktivitas</h3><p class="text-sm text-gray-500">Tidak ada log tercatat untuk sesi Mockup lokal.</p></div>`; }
         function renderPengaturan(c){ 
             c.innerHTML = `
@@ -884,7 +880,6 @@
             showToast("Pengaturan disimpan. Memuat ulang..."); loadData();
         };
 
-        // --- INFO & RIWAYAT ANGGOTA ---
         window.showDetailAnggota = function(id) {
             const a = state.data.anggota.find(x => x['ID Anggota'] === id);
             const saldo = calculateSaldo(id);
@@ -934,7 +929,7 @@
                         </div>
                     </div>
                     
-                    <div class="p-4 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-darkcard flex gap-2 admin-only">
+                    <div class="p-4 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-darkcard flex gap-2 admin-only" style="display:${state.user.role==='admin'?'':'none'}">
                         <button onclick="editAnggota('${a['ID Anggota']}')" class="w-full py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 font-medium text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center gap-2 transition-colors"><i class="ph ph-pencil-simple text-lg text-primary"></i> Edit Data Anggota</button>
                     </div>
                 </div>
@@ -942,7 +937,7 @@
             document.getElementById('modals').innerHTML = content;
         }
 
-        // --- MODALS (Tambah/Edit/Transaksi) ---
+        // --- STREAMING_CHUNK:Modal Handlers... ---
         window.openModal = function(id) {
             const con = document.getElementById('modals'); let content = '';
             if(id === 'modal-anggota') {
@@ -1003,8 +998,6 @@
         };
 
         window.toggleTheme = () => { let h = document.documentElement; h.classList.toggle('dark'); localStorage.setItem('theme', h.classList.contains('dark')?'dark':'light'); };
-
     </script>
 </body>
 </html>
-```eof
