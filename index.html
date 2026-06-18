@@ -416,8 +416,15 @@
             state.ui.currentView = viewName;
             document.querySelectorAll('.nav-btn, .nav-btn-mobile').forEach(btn => {
                 let isAktif = btn.dataset.target === viewName;
-                if(btn.classList.contains('nav-btn')) btn.className = isAktif ? 'nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all text-primary bg-primary/10 font-medium' : 'nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all font-medium';
-                else { let bc = btn.classList.contains('admin-only')?'nav-btn-mobile admin-only':'nav-btn-mobile'; btn.className = isAktif ? `${bc} flex flex-col items-center justify-center p-2 text-primary flex-1 min-w-0` : `${bc} flex flex-col items-center justify-center p-2 text-gray-400 flex-1 min-w-0`; }
+                
+                // Perbaikan: Pertahankan class admin-only agar menu tidak bocor ke User Biasa
+                let isAdminOnly = btn.classList.contains('admin-only') ? ' admin-only' : '';
+                
+                if(btn.classList.contains('nav-btn')) {
+                    btn.className = isAktif ? 'nav-btn' + isAdminOnly + ' w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all text-primary bg-primary/10 font-medium' : 'nav-btn' + isAdminOnly + ' w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all font-medium';
+                } else {
+                    btn.className = isAktif ? 'nav-btn-mobile' + isAdminOnly + ' flex flex-col items-center justify-center p-2 text-primary flex-1 min-w-0' : 'nav-btn-mobile' + isAdminOnly + ' flex flex-col items-center justify-center p-2 text-gray-400 flex-1 min-w-0';
+                }
             });
             const tMap = { dashboard:'Dashboard', anggota:'Anggota', transaksi:'Transaksi', buku:'Buku Tabungan', laporan:'Laporan', pengaturan:'Pengaturan' };
             document.getElementById('mobile-header-title').innerText = tMap[viewName] || 'Aplikasi';
