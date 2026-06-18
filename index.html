@@ -41,6 +41,8 @@
         @keyframes slideInDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* ROLE-BASED CSS */
         body[data-role="user"] .admin-only { display: none !important; }
     </style>
 </head>
@@ -59,10 +61,10 @@
                 
                 <form id="login-form" class="space-y-4 w-full">
                     <div>
-                        <label class="block text-sm font-medium mb-1">ID Anggota / Username</label>
+                        <label class="block text-sm font-medium mb-1">Username / ID Anggota</label>
                         <div class="relative">
                             <i class="ph ph-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                            <input type="text" id="login-user" class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 dark:bg-gray-800 focus:ring-2 focus:ring-primary focus:outline-none transition-all" placeholder="Cth: bendahara atau SITIAMINAH-12" required>
+                            <input type="text" id="login-user" class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 dark:bg-gray-800 focus:ring-2 focus:ring-primary focus:outline-none transition-all" placeholder="Cth: bendahara atau sitiaminah12" required>
                         </div>
                     </div>
                     <div>
@@ -79,7 +81,7 @@
                 <div class="mt-6 text-xs text-center bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
                     <p class="font-bold text-gray-600 dark:text-gray-300 mb-2">Akses Demo:</p>
                     <p class="mb-1"><span class="font-medium text-primary">Bendahara:</span> Username: <b>bendahara</b> | Pass: 123456</p>
-                    <p><span class="font-medium text-primary">Anggota:</span> ID Anggota: <b>SITIAMINAH-12</b> | Pass: 123456</p>
+                    <p><span class="font-medium text-primary">Anggota:</span> ID Anggota: <b>sitiaminah12</b> | Pass: 123456</p>
                 </div>
             </div>
         </div>
@@ -105,7 +107,7 @@
                     <div class="h-px bg-gray-100 dark:bg-gray-800 my-2 admin-only"></div>
                     <!-- All User Menus -->
                     <button class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all font-medium" data-target="buku"><i class="ph ph-book-bookmark text-xl"></i> Buku Tabungan</button>
-                    <button class="nav-btn admin-only w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all font-medium" data-target="pengaturan"><i class="ph ph-gear text-xl"></i> Pengaturan</button>
+                    <button class="nav-btn admin-only w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all font-medium" data-target="pengaturan"><i class="ph ph-gear text-xl"></i> Pengaturan & Log</button>
                 </nav>
             </aside>
 
@@ -156,14 +158,20 @@
     <template id="tpl-dashboard">
         <div class="space-y-4 md:space-y-6 animate-fade-in w-full">
             <h2 class="text-2xl font-bold hidden lg:block dark:text-white" id="dash-title">Overview</h2>
+            <!-- Profile Khusus User -->
             <div id="profile-card" class="hidden"></div>
+            
             <!-- Container khusus Admin -->
             <div id="admin-container" class="admin-only space-y-4 md:space-y-6">
+                <!-- Stats Grid -->
                 <div id="admin-stats" class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 w-full"></div>
+                <!-- Charts -->
                 <div id="admin-charts" class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 mt-4 w-full">
                     <div class="bg-white dark:bg-darkcard p-4 md:p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 w-full min-w-0">
                         <h3 class="font-bold text-gray-700 dark:text-gray-200 mb-4 text-sm md:text-base">Statistik 6 Bulan</h3>
-                        <div class="h-56 md:h-64 w-full relative"><canvas id="chartTransaksi"></canvas></div>
+                        <div class="h-56 md:h-64 w-full relative">
+                            <canvas id="chartTransaksi"></canvas>
+                        </div>
                     </div>
                     <div class="bg-white dark:bg-darkcard p-4 md:p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 w-full min-w-0">
                         <h3 class="font-bold text-gray-700 dark:text-gray-200 mb-4 text-sm md:text-base">Ringkasan Sistem</h3>
@@ -307,8 +315,8 @@
         // --- INIT MOCK DATA ---
         function initMockDB() {
             if(!localStorage.getItem('mock_anggota')) {
-                localStorage.setItem('mock_anggota', JSON.stringify([{"ID Anggota":"SITIAMINAH-12", "Nama Lengkap":"Siti Aminah", "No Rumah":"12", "No HP":"08123456789", "Status":"Aktif"}]));
-                localStorage.setItem('mock_transaksi', JSON.stringify([{"ID Transaksi":"TRX-20260618-0001", "Tanggal": new Date().toISOString(), "ID Anggota":"SITIAMINAH-12", "Nama Anggota":"Siti Aminah", "Jenis Transaksi":"Setoran", "Nominal":150000, "Keterangan":"Iuran Awal", "User Input":"Bendahara"}]));
+                localStorage.setItem('mock_anggota', JSON.stringify([{"ID Anggota":"sitiaminah12", "Nama Lengkap":"Siti Aminah", "No Rumah":"12", "No HP":"08123456789", "Status":"Aktif"}]));
+                localStorage.setItem('mock_transaksi', JSON.stringify([{"ID Transaksi":"TRX-20260618-0001", "Tanggal": new Date().toISOString(), "ID Anggota":"sitiaminah12", "Nama Anggota":"Siti Aminah", "Jenis Transaksi":"Setoran", "Nominal":150000, "Keterangan":"Iuran Awal", "User Input":"Bendahara"}]));
                 localStorage.setItem('mock_logs', JSON.stringify([]));
             }
         }
@@ -345,12 +353,17 @@
                 // Mock System Logic for Offline testing
                 return new Promise(resolve => {
                     setTimeout(() => {
-                        let a = JSON.parse(localStorage.getItem('mock_anggota')), t = JSON.parse(localStorage.getItem('mock_transaksi')), l = JSON.parse(localStorage.getItem('mock_logs'));
+                        let a = JSON.parse(localStorage.getItem('mock_anggota')), t = JSON.parse(localStorage.getItem('mock_transaksi')), l = JSON.parse(localStorage.getItem('mock_logs')||'[]');
                         const addLog = (msg) => { l.unshift({"Waktu": new Date().toISOString(), "User": state.user?state.user.username:'Sys', "Aktivitas": msg}); localStorage.setItem('mock_logs', JSON.stringify(l)); };
                         
-                        if (action === 'get_all_data') resolve({ success: true, data: { anggota: a, transaksi: t, logs: l } });
-                        else if (action === 'save_anggota') {
-                            let id = payload.id || payload.nama.toUpperCase().replace(/[^A-Z]/g, '') + '-' + payload.noRumah;
+                        if(action === 'login') {
+                            if(payload.username.toLowerCase()==='bendahara' && payload.password==='123456') resolve({success:true, role:'admin', data:{'ID Anggota':'ADMIN', 'Nama Lengkap':'Bendahara'}});
+                            else { let u = a.find(x => x['ID Anggota'].toLowerCase() === payload.username.toLowerCase()); if(u && payload.password==='123456') resolve({success:true, role:'user', data:u}); else resolve({success:false, message:'Username atau Password salah'}); }
+                        } else if (action === 'get_all_data') {
+                            if(payload.role === 'user') resolve({success: true, data: { anggota: a.filter(x=>x['ID Anggota']===payload.userId), transaksi: t.filter(x=>x['ID Anggota']===payload.userId), logs:[] }});
+                            else resolve({success: true, data: { anggota: a, transaksi: t, logs: l }});
+                        } else if (action === 'save_anggota') {
+                            let id = payload.id || (payload.nama.toLowerCase().replace(/[^a-z]/g, '') + payload.noRumah.toLowerCase().replace(/[^a-z0-9]/g, ''));
                             if(!payload.id) { a.push({"ID Anggota": id, "Nama Lengkap": payload.nama, "No Rumah": payload.noRumah, "No HP": payload.noHp, "Status": payload.status, "Tanggal Dibuat": new Date().toISOString()}); addLog(`Tambah Anggota: ${id}`); } 
                             else { let i = a.findIndex(x => x['ID Anggota'] === id); if(i>-1) { a[i]['Nama Lengkap']=payload.nama; a[i]['No Rumah']=payload.noRumah; a[i]['No HP']=payload.noHp; a[i]['Status']=payload.status; addLog(`Edit Anggota: ${id}`); } }
                             localStorage.setItem('mock_anggota', JSON.stringify(a)); resolve({success:true});
@@ -369,39 +382,27 @@
                         } else if (action === 'delete_transaksi') {
                             let filtered = t.filter(x => x['ID Transaksi'] !== payload.id); localStorage.setItem('mock_transaksi', JSON.stringify(filtered)); addLog(`Hapus TRX: ${payload.id}`); resolve({success:true});
                         }
-                    }, 200);
+                    }, 400);
                 });
             }
         }
 
         async function loadData() {
-            // Jika login sebagai user (anggota), Backend akan memfilter datanya agar cuma data dia yang dikirim.
-            const payload = state.user.role === 'user' ? { role: 'user', userId: state.user['ID Anggota'] } : { role: 'admin' };
-            const res = await fetchAPI('get_all_data', payload);
-            if(res.success) { 
-                state.data = res.data; 
-                renderCurrentView(); // Render ulang tampilan supaya data selalu fresh (Realtime)
-            }
+            const res = await fetchAPI('get_all_data', { role: state.user.role, userId: state.user['ID Anggota'] });
+            if(res.success) { state.data = res.data; renderCurrentView(); }
         }
 
         // --- AUTH ---
-        function handleLogin(e) {
+        async function handleLogin(e) {
             e.preventDefault(); const u = document.getElementById('login-user').value.trim(), p = document.getElementById('login-pass').value;
-            if (u.toLowerCase() === 'bendahara' && p === '123456') {
-                state.user = { username: 'Bendahara', role: 'admin' }; successLogin();
-            } else {
-                let list = state.data.anggota.length > 0 ? state.data.anggota : (JSON.parse(localStorage.getItem('mock_anggota')) || []);
-                let fUser = list.find(a => a['ID Anggota'].toLowerCase() === u.toLowerCase()); // Wajib ID Anggota biar akurat
-                if(fUser && p === '123456') { state.user = { ...fUser, username: fUser['ID Anggota'], role: 'user' }; successLogin(); } 
-                else showToast("ID Anggota atau Password salah", "error");
-            }
-        }
-
-        function successLogin() {
-            document.getElementById('login-screen').classList.add('hidden'); document.getElementById('main-layout').classList.remove('hidden');
-            document.getElementById('role-badge').innerText = state.user.role === 'admin' ? 'Bendahara' : 'Anggota';
-            document.body.setAttribute('data-role', state.user.role);
-            loadData(); showToast("Login berhasil");
+            const res = await fetchAPI('login', { username: u, password: p });
+            if (res.success) {
+                state.user = { ...res.data, username: u, role: res.role };
+                document.getElementById('login-screen').classList.add('hidden'); document.getElementById('main-layout').classList.remove('hidden');
+                document.getElementById('role-badge').innerText = state.user.role === 'admin' ? 'Bendahara' : 'Anggota';
+                document.body.setAttribute('data-role', state.user.role);
+                loadData(); showToast("Login berhasil");
+            } else showToast(res.message, "error");
         }
 
         function handleLogout() {
@@ -472,8 +473,13 @@
                     let amt = Number(t['Nominal']), isBulanIni = new Date(t['Tanggal']).getMonth() === now.getMonth() && new Date(t['Tanggal']).getFullYear() === now.getFullYear();
                     if(t['Jenis Transaksi']==='Setoran') { saldo+=amt; if(isBulanIni) setB+=amt; } else { saldo-=amt; if(isBulanIni) penB+=amt; }
                 });
-                document.getElementById('stat-anggota').innerText = state.data.anggota.length; document.getElementById('stat-saldo').innerText = formatRupiah(saldo);
-                document.getElementById('stat-setoran').innerText = formatRupiah(setB); document.getElementById('stat-penarikan').innerText = formatRupiah(penB);
+                
+                document.getElementById('admin-stats').innerHTML = `
+                    <div class="bg-white dark:bg-darkcard p-3 md:p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800"><div class="flex items-center gap-2 mb-2"><div class="p-1.5 bg-blue-100 text-blue-600 rounded-lg"><i class="ph ph-users text-lg"></i></div><p class="text-[10px] md:text-xs text-gray-500 font-medium">Total Anggota</p></div><h3 class="text-xl md:text-2xl font-bold dark:text-white">${state.data.anggota.length}</h3></div>
+                    <div class="bg-white dark:bg-darkcard p-3 md:p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800"><div class="flex items-center gap-2 mb-2"><div class="p-1.5 bg-primary/10 text-primary rounded-lg"><i class="ph ph-wallet text-lg"></i></div><p class="text-[10px] md:text-xs text-gray-500 font-medium">Total Saldo</p></div><h3 class="text-base md:text-xl font-bold text-primary">${formatRupiah(saldo)}</h3></div>
+                    <div class="bg-white dark:bg-darkcard p-3 md:p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800"><div class="flex items-center gap-2 mb-2"><div class="p-1.5 bg-success/10 text-success rounded-lg"><i class="ph ph-trend-up text-lg"></i></div><p class="text-[10px] md:text-xs text-gray-500 font-medium">Setoran Bln Ini</p></div><h3 class="text-base md:text-lg font-bold text-success">${formatRupiah(setB)}</h3></div>
+                    <div class="bg-white dark:bg-darkcard p-3 md:p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800"><div class="flex items-center gap-2 mb-2"><div class="p-1.5 bg-danger/10 text-danger rounded-lg"><i class="ph ph-trend-down text-lg"></i></div><p class="text-[10px] md:text-xs text-gray-500 font-medium">Penarikan Bln Ini</p></div><h3 class="text-base md:text-lg font-bold text-danger">${formatRupiah(penB)}</h3></div>
+                `;
                 
                 let ctx = document.getElementById('chartTransaksi');
                 if(ctx) {
@@ -534,7 +540,7 @@
             btn.className = 'px-4 py-1.5 rounded-full bg-primary text-white text-xs sm:text-sm font-medium whitespace-nowrap flex-shrink-0 transition-colors'; renderTransaksi(val);
         };
 
-        // --- DELETE & EDIT LOGIC (Memicu LoadData untuk Realtime Global Sync) ---
+        // --- DELETE & EDIT LOGIC (Global Sync) ---
         window.reqDeleteAnggota = (id) => openConfirmModal("Hapus Anggota?", `Yakin menghapus <b>${id}</b>? Data yang terhapus tidak bisa dikembalikan.`, "Ya, Hapus", async () => { await fetchAPI('delete_anggota', {id}); showToast("Anggota dihapus"); loadData(); });
         window.reqDeleteTrx = (id) => openConfirmModal("Hapus Transaksi?", `Yakin menghapus transaksi <b>${id}</b>? Saldo & buku tabungan akan terkalkulasi ulang secara otomatis.`, "Hapus Permanen", async () => { await fetchAPI('delete_transaksi', {id}); showToast("Transaksi dihapus"); loadData(); });
 
