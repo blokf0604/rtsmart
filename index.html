@@ -870,7 +870,106 @@
                     <td class="p-3 text-right text-success text-sm">${isS?formatRupiah(n):'-'}</td><td class="p-3 text-right text-danger text-sm">${!isS?formatRupiah(n):'-'}</td><td class="p-3 text-right font-bold text-sm bg-gray-50 dark:bg-gray-800/30">${formatRupiah(sld)}</td></tr>`;
             });
         };
-
+        
+        window.cetakBukuTabunganPDF = function() {
+            const id = document.getElementById('select-buku-anggota').value;
+            if (!id) {
+                showToast('Pilih anggota terlebih dahulu', 'error');
+                return;
+            }
+            const anggota = state.data.anggota.find(x => String(x['ID Anggota']) === String(id));
+            if (!anggota) {
+                showToast('Data anggota tidak ditemukan', 'error');
+                return;
+            }
+        
+            const saldoAkhir = calculateSaldo(id);
+            const transaksi = state.data.transaksi
+                .filter(t => String(t['ID Anggota']) === String(id))
+                .sort((a, b) => new Date(a['Tanggal']) - new Date(b['Tanggal']));
+        
+            // Bangun konten HTML untuk PDF
+            const div = document.createElement('div');
+            div.style.padding = '20px';
+            div.style.background = 'white';
+            div.style.color = 'black';
+            div.style.fontFamily = 'sans-serif';
+        
+            // Kop
+            div.innerHTML = `
+                <div style="text-align:center; margin-bottom: 20px;">
+                    <h2 style="margin:0; font-size:20px;">BUKU TABUNGAN</h2>
+                    <h3 style="margin:5px 0 0; font-size:16px; font-weight:normal;">Tabungan Ibu-Ibu RT</h3>
+                    <hr style="margin:10px 0;">
+                </div>
+                <table style="width:100%; font-size:12px; margin-bottom: 20px;">
+                    <tr>
+                        <td style="width:30%; font-weight:bold;">ID Anggota</td>
+                        <td>: ${anggota['ID Anggota']}</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold;">Nama</td>
+                        <td>: ${anggota['Nama Lengkap']}</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold;">No Rumah</td>
+                        <td>: ${anggota['No Rumah'] || '-'}</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold;">Status</td>
+                        <td>: ${anggota['Status'] || '-'}</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold;">Saldo Akhir</td>
+                        <td>: ${formatRupiah(saldoAkhir)}</td>
+                    </tr>
+                </table>
+        
+                <h4 style="font-size:14px; margin-bottom: 10px;">Riwayat Mutasi</h4>
+                <table style="width:100%; border-collapse:collapse; font-size:11px;">
+                    <thead>
+                        <tr style="background:#0F766E; color:white;">
+                            <th style="border:1px solid #ccc; padding:6px; text-align:left;">Tanggal</th>
+                            <th style="border:1px solid #ccc; padding:6px; text-align:left;">Keterangan</th>
+                            <th style="border:1px solid #ccc; padding:6px; text-align:right;">Debit (Masuk)</th>
+                            <th style="border:1px solid #ccc; padding:6px; text-align:right;">Kredit (Keluar)</th>
+                            <th style="border:1px solid #ccc; padding:6px; text-align:right;">Saldo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${transaksi.length === 0 ? `<tr><td colspan="5" style="text-align:center; padding:15px;">Belum ada mutasi</td></tr>` : ''}
+                        ${(() => {
+                            let saldoBerjalan = 0;
+                            return transaksi.map(t => {
+                                const isSetoran = t['Jenis Transaksi'] === 'Setoran';
+                                const nominal = Number(t['Nominal']);
+                                saldoBerjalan += isSetoran ? nominal : -nominal;
+                                return `
+                                    <tr>
+                                        <td style="border:1px solid #ddd; padding:6px;">${formatDateTime(t['Tanggal'])}</td>
+                                        <td style="border:1px solid #ddd; padding:6px;">
+                                            <strong>${t['Jenis Transaksi']}</strong><br>
+                                            <span style="font-size:10px;">${t['Keterangan'] || '-'}</span>
+                                        </td>
+                                        <td style="border:1px solid #ddd; padding:6px; text-align:right; color:green;">${isSetoran ? formatRupiah(nominal) : '-'}</td>
+                                        <td style="border:1px solid #ddd; padding:6px; text-align:right; color:red;">${!isSetoran ? formatRupiah(nominal) : '-'}</td>
+                                        <td style="border:1px solid #ddd; padding:6px; text-align:right; font-weight:bold;">${formatRupiah(saldoBerjalan)}</td>
+                                    </tr>`;
+                            }).join('');
+                        })()}
+                    </tbody>
+                </table>
+                <p style="text-align:right; margin-top:20px; font-size:10px;">Dicetak pada: ${formatDateTime(new Date())}</p>
+            `;
+        
+            html2pdf().set({
+                margin: 10,
+                filename: `Buku_Tabungan_${id}_${new Date().getTime()}.pdf`,
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            }).from(div).save();
+        };
+                
         window.showDetailAnggota = function(id) {
             const a = state.data.anggota.find(x => String(x['ID Anggota']) === String(id));
             if(!a) { showToast("Anggota tidak ditemukan", "error"); return; }
