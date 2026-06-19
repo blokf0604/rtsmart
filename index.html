@@ -99,6 +99,7 @@
         <div class="h-px bg-gray-100 dark:bg-gray-800 my-2"></div>
         <button class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all font-medium" data-target="buku"><i class="ph ph-book-bookmark text-xl"></i> Buku Tabungan</button>
         <button class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all font-medium" data-target="pengaturan"><i class="ph ph-gear text-xl"></i> Pengaturan</button>
+        <button class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all font-medium" data-target="tentang"><i class="ph ph-info text-xl"></i> Tentang</button>
       </nav>
     </aside>
 
@@ -110,14 +111,14 @@
           <h1 class="font-bold text-lg dark:text-white truncate" id="mobile-header-title">Dashboard</h1>
         </div>
         <div class="flex gap-1 flex-shrink-0">
-          <button onclick="navigate('pengaturan')" class="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"><i class="ph ph-gear text-xl"></i></button>
+          <button onclick="navigate('tentang')" class="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"><i class="ph ph-info text-xl"></i></button>
           <button onclick="toggleTheme()" class="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"><i class="ph ph-moon text-xl dark:hidden"></i><i class="ph ph-sun text-xl hidden dark:inline-block"></i></button>
           <button onclick="handleLogout()" class="p-2 text-danger hover:bg-red-50 dark:hover:bg-red-900/30 rounded-full transition-colors"><i class="ph ph-sign-out text-xl"></i></button>
         </div>
       </header>
 
       <div class="hidden lg:flex justify-end px-8 pt-6 pb-2 w-full flex-shrink-0 gap-2">
-        <button onclick="navigate('pengaturan')" class="p-2.5 bg-white dark:bg-darkcard text-gray-500 shadow-sm border border-gray-100 dark:border-gray-700 rounded-full hover:text-primary transition-colors"><i class="ph ph-gear text-[22px]"></i></button>
+        <button onclick="navigate('tentang')" class="p-2.5 bg-white dark:bg-darkcard text-gray-500 shadow-sm border border-gray-100 dark:border-gray-700 rounded-full hover:text-primary transition-colors"><i class="ph ph-info text-[22px]"></i></button>
         <button onclick="toggleTheme()" class="p-2.5 bg-white dark:bg-darkcard text-gray-500 shadow-sm border border-gray-100 dark:border-gray-700 rounded-full hover:text-primary transition-colors"><i class="ph ph-moon text-[22px] dark:hidden"></i><i class="ph ph-sun text-[22px] hidden dark:inline-block"></i></button>
         <button onclick="handleLogout()" class="p-2.5 bg-white dark:bg-darkcard text-danger shadow-sm border border-gray-100 dark:border-gray-700 rounded-full hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors"><i class="ph ph-sign-out text-[22px]"></i></button>
       </div>
@@ -132,7 +133,7 @@
         <button class="nav-btn-mobile flex flex-col items-center justify-center p-2 text-gray-400 flex-1 min-w-0" data-target="warga"><i class="ph ph-identification-badge text-[22px] mb-1"></i><span class="text-[10px] font-medium truncate">Warga</span></button>
         <button class="nav-btn-mobile flex flex-col items-center justify-center p-2 text-gray-400 flex-1 min-w-0" data-target="transaksi"><i class="ph ph-arrows-left-right text-[22px] mb-1"></i><span class="text-[10px] font-medium truncate">Trx</span></button>
         <button class="nav-btn-mobile flex flex-col items-center justify-center p-2 text-gray-400 flex-1 min-w-0" data-target="buku"><i class="ph ph-book-bookmark text-[22px] mb-1"></i><span class="text-[10px] font-medium truncate">Buku</span></button>
-        <button class="nav-btn-mobile flex flex-col items-center justify-center p-2 text-gray-400 flex-1 min-w-0" data-target="kas"><i class="ph ph-book-open text-[22px] mb-1"></i><span class="text-[10px] font-medium truncate">Kas</span></button>
+        <button class="nav-btn-mobile flex flex-col items-center justify-center p-2 text-gray-400 flex-1 min-w-0" data-target="tentang"><i class="ph ph-info text-[22px] mb-1"></i><span class="text-[10px] font-medium truncate">Tentang</span></button>
       </div>
     </nav>
   </div>
@@ -180,7 +181,6 @@
       <div class="overflow-x-auto w-full h-full">
         <table class="w-full text-left text-sm whitespace-nowrap min-w-[900px]" id="warga-table">
           <thead class="bg-gray-50 dark:bg-gray-800/50 text-gray-500 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10" id="warga-thead">
-            <!-- akan diisi oleh JS -->
           </thead>
           <tbody id="table-warga" class="divide-y divide-gray-100 dark:divide-gray-800"></tbody>
         </table>
@@ -349,6 +349,28 @@
   </div>
 </template>
 
+<template id="tpl-tentang">
+  <div class="max-w-lg mx-auto mt-10 animate-fade-in text-center space-y-6">
+    <div class="flex justify-center">
+      <div class="h-24 w-24 bg-primary text-white rounded-3xl flex items-center justify-center shadow-xl">
+        <i class="ph ph-wallet text-5xl"></i>
+      </div>
+    </div>
+    <h2 class="text-3xl font-bold text-primary dark:text-white">E-Kas & Tabungan RT</h2>
+    <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+      Aplikasi pengelolaan keuangan RT modern. Memudahkan bendahara dalam mencatat iuran, arisan, tabungan warga, serta kas masuk dan keluar secara transparan dan real‑time.
+    </p>
+    <div class="bg-white dark:bg-darkcard rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 space-y-3 text-sm text-left">
+      <div class="flex justify-between"><span class="text-gray-500">Versi</span><span class="font-mono font-bold">1.0.0</span></div>
+      <div class="flex justify-between"><span class="text-gray-500">Dibangun dengan</span><span class="font-mono">Google Apps Script</span></div>
+      <div class="flex justify-between"><span class="text-gray-500">Database</span><span class="font-mono">Google Sheets</span></div>
+      <div class="flex justify-between"><span class="text-gray-500">Akses</span><span class="font-mono">Multi‑role (4 level)</span></div>
+      <div class="flex justify-between"><span class="text-gray-500">Lisensi</span><span class="font-mono">Internal RT</span></div>
+    </div>
+    <p class="text-xs text-gray-400 dark:text-gray-600">Dikembangkan oleh Tim RT · © 2026</p>
+  </div>
+</template>
+
 <!-- JS LOGIC -->
 <script>
   const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbxcuUe9qO2PyallWSn7vu2UiiKTnMqirKbocdI_VI8uWnYyjYYvRsv_DUpGIV2GSWiuqQ/exec';
@@ -361,7 +383,8 @@
     pembayaran: ['superadmin', 'admin_suami'],
     kas: ['superadmin', 'admin_istri', 'admin_suami', 'user'],
     buku: ['superadmin', 'admin_istri'],
-    pengaturan: ['superadmin']
+    pengaturan: ['superadmin'],
+    tentang: ['superadmin', 'admin_istri', 'admin_suami', 'user']
   };
 
   function canAccess(viewName) {
@@ -556,7 +579,7 @@
       if (!canAccess(btn.dataset.target)) btn.classList.add('hidden');
       else btn.classList.remove('hidden');
     });
-    const tMap = { dashboard:'Dashboard', warga:'Warga', transaksi:'Transaksi', pembayaran:'Pembayaran', kas:'Buku Kas', buku:'Buku Tabungan', pengaturan:'Pengaturan' };
+    const tMap = { dashboard:'Dashboard', warga:'Warga', transaksi:'Transaksi', pembayaran:'Pembayaran', kas:'Buku Kas', buku:'Buku Tabungan', pengaturan:'Pengaturan', tentang:'Tentang' };
     document.getElementById('mobile-header-title').innerText = tMap[viewName] || 'Aplikasi';
     renderCurrentView();
   }
@@ -574,6 +597,7 @@
     else if(v==='kas'){ a.appendChild(document.getElementById('tpl-kas').content.cloneNode(true)); window.ekas.kas.render(); }
     else if(v==='buku'){ a.appendChild(document.getElementById('tpl-buku').content.cloneNode(true)); setupBukuTabungan(); }
     else if(v==='pengaturan'){ a.appendChild(document.getElementById('tpl-setting').content.cloneNode(true)); window.ekas.biaya.render(); }
+    else if(v==='tentang'){ a.appendChild(document.getElementById('tpl-tentang').content.cloneNode(true)); }
   }
 
   // ===================== DASHBOARD =====================
@@ -614,7 +638,6 @@
     const mutasiDiv = document.getElementById('dashboard-mutasi');
     if (state.user.role !== 'superadmin') {
       const myTransaksi = state.data.transaksi.filter(t => String(t['ID Anggota']) === String(myId)).sort((a,b) => new Date(b['Tanggal']) - new Date(a['Tanggal']));
-      const recent = myTransaksi.slice(0, 5);
       const sortedAsc = [...myTransaksi].sort((a,b) => new Date(a['Tanggal']) - new Date(b['Tanggal']));
       let saldo = 0;
       const saldoMap = new Map();
