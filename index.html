@@ -352,24 +352,98 @@
 </template>
 
 <template id="tpl-tentang">
-  <div class="max-w-lg mx-auto mt-10 animate-fade-in text-center space-y-6">
-    <div class="flex justify-center">
-      <div class="h-24 w-24 bg-primary text-white rounded-3xl flex items-center justify-center shadow-xl">
-        <i class="ph ph-wallet text-5xl"></i>
+  <div class="max-w-2xl mx-auto py-6 px-4 sm:px-6 lg:px-8 space-y-8 animate-fade-in text-gray-800 dark:text-gray-200">
+    
+    <!-- HEADER -->
+    <div class="text-center">
+      <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-blue-600 text-white shadow-lg mb-4">
+        <i class="ph ph-wallet text-4xl"></i>
+      </div>
+      <div class="flex items-center justify-center gap-3 flex-wrap">
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">E-KAS RT 06/04</h1>
+        <span class="px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-xs font-medium text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700">v1.0.0</span>
+      </div>
+      <hr class="mt-4 border-gray-200 dark:border-gray-700">
+    </div>
+
+    <!-- HERO / DESKRIPSI -->
+    <div class="bg-white dark:bg-darkcard rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800">
+      <h2 class="text-xl font-bold mb-3 flex items-center gap-2">
+        <span>📱</span> E-KAS RT 06/04
+      </h2>
+      <p class="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
+        "E-KAS RT 06/04 adalah aplikasi pengelolaan keuangan RT yang dirancang untuk membantu pengurus RT dalam mencatat iuran warga, arisan, pemasukan, pengeluaran, dan laporan keuangan secara digital, transparan, dan efisien."
+      </p>
+      <p class="text-sm text-gray-500 dark:text-gray-500 leading-relaxed">
+        Aplikasi ini dibangun untuk mendukung digitalisasi administrasi RT sehingga pengelolaan keuangan dapat dilakukan dengan lebih mudah, cepat, dan akurat.
+      </p>
+    </div>
+
+    <!-- FITUR UTAMA -->
+    <div>
+      <h3 class="text-lg font-bold mb-4 text-gray-900 dark:text-white">✨ Fitur Utama</h3>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="bg-white dark:bg-darkcard rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-800 text-center">
+          <i class="ph ph-chart-bar text-3xl text-blue-600 mb-2"></i>
+          <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Dashboard<br>Keuangan</p>
+        </div>
+        <div class="bg-white dark:bg-darkcard rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-800 text-center">
+          <i class="ph ph-users text-3xl text-green-600 mb-2"></i>
+          <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Data Warga</p>
+        </div>
+        <div class="bg-white dark:bg-darkcard rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-800 text-center">
+          <i class="ph ph-money text-3xl text-yellow-500 mb-2"></i>
+          <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Iuran Wajib</p>
+        </div>
+        <div class="bg-white dark:bg-darkcard rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-800 text-center">
+          <i class="ph ph-file-text text-3xl text-red-500 mb-2"></i>
+          <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Laporan<br>Keuangan</p>
+        </div>
+      </div>
+      <div class="mt-4 bg-white dark:bg-darkcard rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-800 text-center">
+        <i class="ph ph-cloud-arrow-down text-3xl text-indigo-500 mb-2"></i>
+        <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Sinkronisasi<br>Google Sheets</p>
       </div>
     </div>
-    <h2 class="text-3xl font-bold text-primary dark:text-white">E-Kas & Tabungan RT</h2>
-    <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
-      Aplikasi pengelolaan keuangan RT modern. Memudahkan bendahara dalam mencatat iuran, arisan, tabungan warga, serta kas masuk dan keluar secara transparan dan real‑time.
-    </p>
-    <div class="bg-white dark:bg-darkcard rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 space-y-3 text-sm text-left">
-      <div class="flex justify-between"><span class="text-gray-500">Versi</span><span class="font-mono font-bold">1.0.0</span></div>
-      <div class="flex justify-between"><span class="text-gray-500">Dibangun dengan</span><span class="font-mono">Google Apps Script</span></div>
-      <div class="flex justify-between"><span class="text-gray-500">Database</span><span class="font-mono">Google Sheets</span></div>
-      <div class="flex justify-between"><span class="text-gray-500">Akses</span><span class="font-mono">Multi‑role (4 level)</span></div>
-      <div class="flex justify-between"><span class="text-gray-500">Lisensi</span><span class="font-mono">Internal RT</span></div>
+
+    <!-- TUJUAN APLIKASI -->
+    <div class="bg-white dark:bg-darkcard rounded-2xl p-6 shadow-sm border-l-4 border-blue-600 dark:border-blue-500">
+      <h3 class="text-lg font-bold mb-2 flex items-center gap-2 text-gray-900 dark:text-white">
+        <span>🎯</span> Tujuan Aplikasi
+      </h3>
+      <p class="text-gray-600 dark:text-gray-400 leading-relaxed text-sm">
+        Meningkatkan transparansi, akuntabilitas, dan efisiensi pengelolaan keuangan RT melalui sistem pencatatan digital yang modern dan mudah digunakan.
+      </p>
     </div>
-    <p class="text-xs text-gray-400 dark:text-gray-600">Dikembangkan oleh Tim RT · © 2026</p>
+
+    <!-- INFORMASI PENGEMBANG -->
+    <div class="bg-white dark:bg-darkcard rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800">
+      <h3 class="text-lg font-bold mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
+        <span>👨‍💻</span> Informasi Pengembangan
+      </h3>
+      <div class="flex items-start gap-4 flex-wrap">
+        <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-700 dark:text-blue-300 font-bold text-lg flex-shrink-0">
+          EP
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="font-bold text-gray-900 dark:text-white">Eko Priyanto</p>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Developer & Administrator</p>
+          <div class="flex items-center gap-2 mt-2 text-sm text-gray-600 dark:text-gray-400">
+            <i class="ph ph-envelope text-lg"></i>
+            <span>ekopriyanto.ads@gmail.com</span>
+          </div>
+          <a href="mailto:ekopriyanto.ads@gmail.com" class="inline-flex items-center gap-2 mt-4 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-medium transition-colors shadow-sm">
+            <i class="ph ph-paper-plane-tilt"></i> Kirim Email
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="text-center pt-4 border-t border-gray-200 dark:border-gray-700">
+      <p class="text-xs text-gray-400 dark:text-gray-600">© 2026 E-KAS RT 06/04</p>
+      <p class="text-xs text-gray-400 dark:text-gray-600 mt-1">Dibangun untuk mendukung transparansi dan efisiensi pengelolaan keuangan RT.</p>
+    </div>
   </div>
 </template>
 
