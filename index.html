@@ -466,7 +466,7 @@
   let chartInstance = null, chartEkasInstance = null;
   const state = { 
     user: null, 
-    data: { warga: [], transaksi: [], biaya: [], pembayaran: [], kas: [], settings: {} }, 
+    data: { warga: [], transaksi: [], tunggakan: [], biaya: [], pembayaran: [], kas: [], settings: {} }, 
     settings: { gasUrl: readStorage('gasUrl', DEFAULT_GAS_URL), theme: readStorage('theme', 'light') },
     ui: { currentView: 'dashboard' }
   };
@@ -585,6 +585,7 @@
       state.data = { 
         warga: (res.data.warga || []),
         transaksi: (res.data.transaksi || []),
+        tunggakan: (res.data.tunggakan || []),
         biaya: (res.data.biaya || []),
         pembayaran: (res.data.pembayaran || []),
         kas: (res.data.kas || []),
@@ -605,7 +606,7 @@
   }
 
   function handleLogout() {
-    state.user = null; state.data = { warga: [], transaksi: [], biaya: [], pembayaran: [], kas: [], settings: {} };
+    state.user = null; state.data = { warga: [], transaksi: [], tunggakan: [], biaya: [], pembayaran: [], kas: [], settings: {} };
     clearSession();
     document.body.removeAttribute('data-role');
     document.getElementById('login-screen').classList.remove('hidden'); 
@@ -787,6 +788,7 @@
         const data = state.data.warga || [];
         const role = state.user.role;
         const showSaldo = role === 'superadmin' || role === 'admin_istri';
+        const showTunggakan = role === 'superadmin' || role === 'admin_suami';
         const canManage = role === 'superadmin' || role === 'admin_istri' || role === 'admin_suami';
         
         const thead = document.getElementById('warga-thead');
@@ -798,6 +800,7 @@
             <th class="p-4">Rumah</th>
             <th class="p-4">Iuran/Arisan</th>
             ${showSaldo ? '<th class="p-4">Saldo Tabungan</th>' : ''}
+            ${showTunggakan ? '<th class="p-4">Tunggakan</th>' : ''}
             <th class="p-4 text-center">Aksi</th>
           </tr>
         `;
@@ -806,7 +809,9 @@
           `<button class="bg-primary hover:bg-primary-dark text-white px-4 py-2.5 rounded-xl flex items-center gap-2" onclick="window.ekas.warga.openModal()"><i class="ph ph-plus-circle text-lg"></i> Tambah Warga</button>` : '';
         
         if(data.length===0) {
-          const colSpan = showSaldo ? 7 : 6;
+          let colSpan = 6;
+          if (showSaldo) colSpan++;
+          if (showTunggakan) colSpan++;
           tb.innerHTML = `<tr><td colspan="${colSpan}" class="p-6 text-center text-gray-500">Belum ada data warga.</td></tr>`;
           return;
         }
@@ -816,6 +821,8 @@
           const iuran = w['Bayar Iuran?'] || 'TIDAK';
           const arisan = w['Ikut Arisan?'] || 'TIDAK';
           const slot = w['Slot Arisan'] || '0';
+          const tunggakanList = state.data.tunggakan.filter(t => t['ID Warga'] === w['ID Warga']);
+          const totalTunggakan = tunggakanList.reduce((sum, t) => sum + Number(t['Iuran']||0) + Number(t['Arisan']||0), 0);
           const aksi = canManage ? `
             <div class="flex justify-center items-center gap-1">
               <button onclick="window.ekas.warga.openModal('${w['ID Warga']}')" class="text-blue-500 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg"><i class="ph ph-pencil-simple"></i></button>
@@ -828,6 +835,7 @@
             <td class="p-3 md:p-4">${w['No Rumah']}</td>
             <td class="p-3 md:p-4 text-xs">Iuran: <span class="${iuran==='YA'?'text-success':'text-danger'} font-bold">${iuran}</span><br>Arisan: <span class="text-primary">${arisan==='YA'? slot+' Slot' : 'TIDAK'}</span></td>
             ${showSaldo ? `<td class="p-3 md:p-4 font-bold text-gray-700 dark:text-gray-200">${formatRupiah(saldo)}</td>` : ''}
+            ${showTunggakan ? `<td class="p-3 md:p-4 font-bold ${totalTunggakan > 0 ? 'text-danger' : 'text-success'}">${totalTunggakan > 0 ? formatRupiah(totalTunggakan) : 'Lunas'}</td>` : ''}
             <td class="p-3 md:p-4 text-center">${aksi}</td>
           </tr>`;
         }).join('');
@@ -907,8 +915,15 @@
     pembayaran: {
       render() {
         const sel = document.getElementById('pay-warga');
-        // *** PERUBAHAN: Tampilkan Nama Suami ***
-        sel.innerHTML = '<option value="">-- Pilih Warga --</option>' + state.data.warga.map(w => `<option value="${w['ID Warga']}">${w['Nama Suami']} (${w['No Rumah']})</option>`).join('');
+        const tunggakanMap = {};
+        state.data.tunggakan.forEach(t => {
+          if (!tunggakanMap[t['ID Warga']]) tunggakanMap[t['ID Warga']] = 0;
+          tunggakanMap[t['ID Warga']] += Number(t['Iuran']||0) + Number(t['Arisan']||0);
+        });
+        sel.innerHTML = '<option value="">-- Pilih Warga --</option>' + state.data.warga.map(w => {
+          const adaTunggakan = tunggakanMap[w['ID Warga']] > 0;
+          return `<option value="${w['ID Warga']}">${w['Nama Suami']} (${w['No Rumah']})${adaTunggakan ? ' ⚠️ Nunggak' : ''}</option>`;
+        }).join('');
         const tb = document.getElementById('table-pembayaran');
         let pay = [...(state.data.pembayaran||[])].sort((a,b)=>new Date(b.Tanggal)-new Date(a.Tanggal));
         const canEdit = (state.user.role === 'superadmin' || state.user.role === 'admin_suami');
@@ -919,7 +934,7 @@
         }
         if(pay.length===0) { tb.innerHTML = '<tr><td colspan="5" class="px-5 py-10 text-center text-gray-500">Belum ada pembayaran.</td></tr>'; return; }
         tb.innerHTML = pay.map(p => {
-          const wName = state.data.warga.find(w=>w['ID Warga']===p.WargaID)?.['Nama Suami'] || p.WargaID; // *** PERUBAHAN: Nama Suami ***
+          const wName = state.data.warga.find(w=>w['ID Warga']===p.WargaID)?.['Nama Suami'] || p.WargaID;
           return `<tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors border-b border-gray-50">
             <td class="px-5 py-3"><div class="font-bold">${wName}</div><div class="text-xs text-gray-500">${new Date(p.Tanggal).toLocaleDateString('id-ID')}</div></td>
             <td class="px-5 py-3">${p.Bulan} ${p.Tahun}</td>
