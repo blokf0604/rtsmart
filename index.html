@@ -156,7 +156,6 @@
     <h2 class="text-2xl font-bold hidden lg:block dark:text-white" id="dash-title">Dashboard</h2>
     <div id="profile-card" class="hidden"></div>
     <div id="admin-container" class="admin-only space-y-4 md:space-y-6">
-      <!-- STATS: Total Warga, Saldo Kas, Masuk Bulan Ini, Keluar Bulan Ini -->
       <div id="dashboard-stats" class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 w-full"></div>
       <div id="admin-charts" class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 mt-4 w-full">
         <div class="bg-white dark:bg-darkcard p-4 md:p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 w-full min-w-0">
@@ -223,6 +222,7 @@
 </template>
 
 <template id="tpl-pembayaran">
+  <!-- tetap sama -->
   <div class="space-y-4 animate-fade-in h-full flex flex-col w-full">
     <h2 class="text-2xl font-bold dark:text-white">Penerimaan Pembayaran</h2>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -263,6 +263,7 @@
 </template>
 
 <template id="tpl-kas">
+  <!-- tetap sama dengan filter tanggal -->
   <div class="space-y-4 animate-fade-in h-full flex flex-col w-full">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
       <h2 class="text-2xl font-bold dark:text-white">Buku Kas</h2>
@@ -425,6 +426,25 @@
   };
   function showLoading() { document.getElementById('loading-overlay').classList.remove('hidden'); }
   function hideLoading() { document.getElementById('loading-overlay').classList.add('hidden'); }
+
+  // 🔥 Fungsi format input ribuan (TITIK PEMISAH)
+  function formatInputRibuan(e) {
+    const input = e.target;
+    let raw = input.value.replace(/\./g, '').replace(/,/g, '');
+    if (raw === '' || isNaN(raw)) {
+      input.dataset.value = '';
+      input.value = '';
+      return;
+    }
+    const number = parseInt(raw, 10);
+    input.dataset.value = number;
+    input.value = number.toLocaleString('id-ID', { maximumFractionDigits: 0 });
+  }
+
+  function formatAngkaInput(number) {
+    if (!number || isNaN(number)) return '';
+    return Number(number).toLocaleString('id-ID', { maximumFractionDigits: 0 });
+  }
 
   async function fetchAPI(action, payload = {}) {
     const gasUrl = getGasUrl();
@@ -610,7 +630,6 @@
         }
       });
 
-      // Statistik yang ditampilkan: Total Warga, Saldo Kas, Masuk Bulan Ini, Keluar Bulan Ini
       document.getElementById('dashboard-stats').innerHTML = `
         <div class="bg-white dark:bg-darkcard p-4 rounded-2xl shadow-sm border"><p class="text-xs text-gray-500">Total Warga</p><h3 class="text-xl font-bold">${state.data.warga.length}</h3></div>
         <div class="bg-white dark:bg-darkcard p-4 rounded-2xl shadow-sm border"><p class="text-xs text-gray-500">Saldo Kas</p><h3 class="text-xl font-bold text-primary">${formatRupiah(saldoKas)}</h3></div>
@@ -620,7 +639,6 @@
       const ctx1 = document.getElementById('chartTransaksi');
       if(ctx1) {
         if(chartInstance) chartInstance.destroy();
-        // Chart tetap menampilkan setoran/penarikan dari transaksi tabungan
         let st=0, pt=0;
         state.data.transaksi.forEach(t => { let n = Number(t['Nominal']); if(t['Jenis Transaksi']==='Setoran') st+=n; else pt+=n; });
         chartInstance = new Chart(ctx1, { type: 'bar', data: { labels: ['Setoran','Penarikan'], datasets: [{ data: [st, pt], backgroundColor: ['#14B8A6','#DC2626'] }] }, options: { responsive: true, maintainAspectRatio: false } });
@@ -728,7 +746,7 @@
       }
     },
 
-    pembayaran: { /* ... tetap sama dengan sebelumnya, dengan edit dan delete sinkron ... */
+    pembayaran: {
       render() {
         const sel = document.getElementById('pay-warga');
         sel.innerHTML = '<option value="">-- Pilih Warga --</option>' + state.data.warga.map(w => `<option value="${w['ID Warga']}">${w['Nama Istri']} (${w['No Rumah']})</option>`).join('');
@@ -815,7 +833,7 @@
       }
     },
 
-    kas: { /* ... tetap sama dengan filter tanggal ... */
+    kas: {
       render() {
         const tb = document.getElementById('table-kas');
         let kas = [...(state.data.kas||[])];
@@ -887,7 +905,7 @@
       }
     },
 
-    biaya: { /* ... tetap dengan edit dan hapus ... */
+    biaya: {
       render() {
         const tb = document.getElementById('table-biaya');
         if(state.data.biaya.length===0) { tb.innerHTML = '<tr><td colspan="4" class="px-5 py-8 text-center text-gray-500">Belum ada biaya tambahan.</td></tr>'; return; }
@@ -949,7 +967,7 @@
       }
     },
 
-    laporan: { /* ... tetap ... */
+    laporan: {
       init() {
         const sel = document.getElementById('lap-bulan');
         const months = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
@@ -1106,12 +1124,18 @@
               <label class="flex-1 text-center"><input type="radio" name="f-t-jenis" value="Penarikan" class="peer sr-only" ${trx['Jenis Transaksi']==='Penarikan'?'checked':''}><div class="py-2 rounded-lg text-sm font-medium peer-checked:bg-white peer-checked:text-danger shadow-sm">Uang Keluar</div></label>
             </div>
             <div><label class="block text-xs font-medium mb-1">Warga</label><select id="f-t-warga" class="w-full p-2.5 rounded-xl border dark:border-gray-700 dark:bg-gray-900 text-sm" required>${opts}</select></div>
-            <div><label class="block text-xs font-medium mb-1">Nominal (Rp)</label><input type="number" id="f-t-nominal" class="w-full p-2.5 rounded-xl border dark:border-gray-700 dark:bg-gray-900 font-bold text-lg text-right" required value="${trx['Nominal']}"></div>
+            <div><label class="block text-xs font-medium mb-1">Nominal (Rp)</label><input type="text" id="f-t-nominal" class="w-full p-2.5 rounded-xl border dark:border-gray-700 dark:bg-gray-900 font-bold text-lg text-right" required value="${formatAngkaInput(trx['Nominal'])}"></div>
             <div><label class="block text-xs font-medium mb-1">Keterangan</label><input type="text" id="f-t-ket" class="w-full p-2.5 rounded-xl border dark:border-gray-700 dark:bg-gray-900 text-sm" value="${trx['Keterangan']||''}"></div>
             <div class="pt-2"><button type="submit" class="w-full py-3 rounded-xl bg-primary text-white font-medium text-sm">Simpan Perubahan</button></div>
           </form>
         </div>
       </div></div>`;
+    setTimeout(() => {
+      const nominalInput = document.getElementById('f-t-nominal');
+      if (nominalInput) {
+        nominalInput.addEventListener('input', formatInputRibuan);
+      }
+    }, 50);
   };
 
   window.submitEditTransaksi = async function(e, idTransaksi) {
@@ -1119,7 +1143,8 @@
     const idWarga = document.getElementById('f-t-warga').value;
     const warga = state.data.warga.find(w=>w['ID Warga']===idWarga);
     if(!warga) { showToast("Pilih warga", "error"); return; }
-    const nominal = toNumber(document.getElementById('f-t-nominal').value);
+    const nominalInput = document.getElementById('f-t-nominal');
+    const nominal = toNumber(nominalInput.dataset.value || '0');
     if(nominal <= 0) { showToast("Nominal > 0", "error"); return; }
     showLoading();
     const res = await fetchAPI('save_transaksi', {
@@ -1142,7 +1167,8 @@
     const idWarga = document.getElementById('f-t-warga').value;
     const warga = state.data.warga.find(w=>w['ID Warga']===idWarga);
     if(!warga) { showToast("Pilih warga", "error"); return; }
-    const nominal = toNumber(document.getElementById('f-t-nominal').value);
+    const nominalInput = document.getElementById('f-t-nominal');
+    const nominal = toNumber(nominalInput.dataset.value || '0');
     if(nominal <= 0) { showToast("Nominal > 0", "error"); return; }
     showLoading();
     const res = await fetchAPI('save_transaksi', {
@@ -1247,12 +1273,18 @@
                 <label class="flex-1 text-center"><input type="radio" name="f-t-jenis" value="Penarikan" class="peer sr-only"><div class="py-2 rounded-lg text-sm font-medium peer-checked:bg-white peer-checked:text-danger shadow-sm">Uang Keluar</div></label>
               </div>
               <div><label class="block text-xs font-medium mb-1">Warga</label><select id="f-t-warga" class="w-full p-2.5 rounded-xl border dark:border-gray-700 dark:bg-gray-900 text-sm" required>${opts}</select></div>
-              <div><label class="block text-xs font-medium mb-1">Nominal (Rp)</label><input type="number" id="f-t-nominal" class="w-full p-2.5 rounded-xl border dark:border-gray-700 dark:bg-gray-900 font-bold text-lg text-right" required></div>
+              <div><label class="block text-xs font-medium mb-1">Nominal (Rp)</label><input type="text" id="f-t-nominal" class="w-full p-2.5 rounded-xl border dark:border-gray-700 dark:bg-gray-900 font-bold text-lg text-right" required></div>
               <div><label class="block text-xs font-medium mb-1">Keterangan</label><input type="text" id="f-t-ket" class="w-full p-2.5 rounded-xl border dark:border-gray-700 dark:bg-gray-900 text-sm" placeholder="Cth: Iuran Juli"></div>
               <div class="pt-2"><button type="submit" class="w-full py-3 rounded-xl bg-primary text-white font-medium text-sm">Proses Transaksi</button></div>
             </form>
           </div>
         </div></div>`;
+      setTimeout(() => {
+        const nominalInput = document.getElementById('f-t-nominal');
+        if (nominalInput) {
+          nominalInput.addEventListener('input', formatInputRibuan);
+        }
+      }, 50);
     } else if (id === 'modal-profile') {
       const user = state.user;
       document.getElementById('modals').innerHTML = `<div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
