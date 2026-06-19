@@ -313,11 +313,19 @@
 
     <!-- JS LOGIC -->
     <script>
-        const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbxcuUe9qO2PyallWSn7vu2UiiKTnMqirKbocdI_VI8uWnYyjYYvRsv_DUpGIV2GSWiuqQ/exec';
+        const DEFAULT_GAS_URL = '';
         const ADMIN_VIEWS = new Set(['anggota', 'transaksi', 'laporan', 'pengaturan']);
 
         const readStorage = (key, fallback = '') => {
             try { return localStorage.getItem(key) || fallback; } catch(e) { return fallback; }
+        };
+
+        const writeStorage = (key, value) => {
+            try { localStorage.setItem(key, value); } catch(e) {}
+        };
+
+        const removeStorage = (key) => {
+            try { localStorage.removeItem(key); } catch(e) {}
         };
 
         // --- GLOBAL THEME TOGGLE FIX ---
@@ -334,10 +342,11 @@
             }
         }
         
-        document.addEventListener('DOMContentLoaded', () => { 
+        document.addEventListener('DOMContentLoaded', async () => { 
             initMockDB(); 
             if(localStorage.getItem('theme')==='dark') document.documentElement.classList.add('dark'); 
-            document.getElementById('login-form').addEventListener('submit', handleLogin); 
+            document.getElementById('login-form').addEventListener('submit', handleLogin);
+            await restoreSession();
         });
 
         let chartInstance = null;
@@ -368,6 +377,14 @@
             data.Role = normalizeRole(data.Role);
             return data;
         };
+        const persistSession = () => {
+            if (!state.user) return;
+            writeStorage('app_session', JSON.stringify({
+                user: state.user,
+                savedAt: Date.now()
+            }));
+        };
+        const clearSession = () => removeStorage('app_session');
         const getUserInitials = (user) => String(user?.['Nama Lengkap'] || user?.['ID Anggota'] || '?').trim().split(/\s+/).slice(0, 2).map(x => x[0] || '').join('').toUpperCase();
         const avatarMarkup = (user, classes = 'h-20 w-20') => {
             const url = user?.['Foto Profil'];
@@ -479,6 +496,39 @@
             });
         }
 
+        async function restoreSession() {
+            const raw = readStorage('app_session', '');
+            if (!raw) return false;
+
+            try {
+                const session = JSON.parse(raw);
+                if (!session || !session.user || !session.user.token) return false;
+
+                state.user = session.user;
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('main-layout').classList.remove('hidden');
+                document.getElementById('role-badge').innerText = state.user.role === 'admin' ? 'Admin' : 'Anggota';
+                document.body.setAttribute('data-role', state.user.role);
+                document.getElementById('login-form').reset();
+                navigate('dashboard');
+
+                const loaded = await loadData();
+                if (!loaded) {
+                    clearSession();
+                    state.user = null;
+                    document.body.removeAttribute('data-role');
+                    document.getElementById('login-screen').classList.remove('hidden');
+                    document.getElementById('main-layout').classList.add('hidden');
+                    return false;
+                }
+
+                return true;
+            } catch (error) {
+                clearSession();
+                return false;
+            }
+        }
+
         async function handleLogin(e) {
             e.preventDefault(); 
             const u = document.getElementById('login-user').value.trim(); 
@@ -491,6 +541,7 @@
 
             if (res.success) {
                 state.user = { ...res.data, username: u, role: normalizeRole(res.role || res.data?.Role), token: res.token || '' };
+                persistSession();
                 document.getElementById('login-screen').classList.add('hidden'); 
                 document.getElementById('main-layout').classList.remove('hidden');
                 document.getElementById('role-badge').innerText = state.user.role === 'admin' ? 'Bendahara' : 'Anggota';
@@ -522,6 +573,7 @@
 
         function handleLogout() {
             state.user = null; state.data = { anggota: [], transaksi: [], logs: [] }; state.ui.currentView = 'dashboard';
+            clearSession();
             document.body.removeAttribute('data-role'); document.getElementById('login-screen').classList.remove('hidden'); document.getElementById('main-layout').classList.add('hidden');
             document.getElementById('login-form').reset(); closeAllModals(); if(chartInstance) { chartInstance.destroy(); chartInstance = null; }
             document.getElementById('content-area').innerHTML = '';
@@ -1032,6 +1084,7 @@
                     ...(res.data || {}),
                     role: normalizeRole(res.role || res.data?.Role || state.user.role)
                 };
+                persistSession();
                 document.body.setAttribute('data-role', state.user.role);
                 showToast(res.message || "Profil berhasil diperbarui");
                 closeAllModals();
