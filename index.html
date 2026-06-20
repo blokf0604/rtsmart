@@ -663,149 +663,151 @@
 
   // ===================== DASHBOARD =====================
   function renderDashboard() {
-    if (!state.user) return;
-    const myId = state.user['ID Warga'];
-    const mySaldo = calculateSaldo(myId);
-    const roleLabel = state.user.role === 'superadmin' ? 'Superadmin' : (state.user.role === 'admin_istri' ? 'Admin Istri' : (state.user.role === 'admin_suami' ? 'Admin Suami' : 'Warga'));
-    
-    // --- HITUNG TUNGGAKAN ---
-    const tunggakanSaya = state.data.tunggakan.filter(t => t['ID Warga'] === myId);
-    const jumlahBulanMenunggak = tunggakanSaya.length;
-    const totalTunggakan = tunggakanSaya.reduce((sum, t) => sum + Number(t['Iuran']||0) + Number(t['Arisan']||0), 0);
-    
-    const profileHtml = `
-      <div class="bg-gradient-to-br from-primary to-primary-dark p-5 md:p-6 rounded-2xl shadow-md text-white relative overflow-hidden flex flex-col sm:flex-row gap-4 mb-2 mt-2">
-        <div class="absolute -right-6 -top-6 opacity-10"><i class="ph ph-user-circle" style="font-size: 150px;"></i></div>
-        <div class="z-10 flex-shrink-0">${avatarMarkup(state.user, 'h-20 w-20 md:h-24 md:w-24')}</div>
-        <div class="flex-1 z-10 w-full min-w-0">
-          <div class="flex flex-wrap items-center gap-2 mb-2">
-            <p class="text-white/80 text-[10px] uppercase font-bold tracking-wide">Profil ${roleLabel}</p>
-            <span class="text-[10px] uppercase font-bold bg-white/15 border border-white/20 px-2 py-0.5 rounded-full">${roleLabel}</span>
-          </div>
-          <h3 class="text-2xl font-bold mb-1 truncate">${state.user['Nama Suami'] || '-'}</h3>
-          <p class="text-xs opacity-90">Istri: ${state.user['Nama Istri'] || '-'}</p>
-          <p class="text-xs opacity-90 mt-0.5"><i class="ph ph-identification-card"></i> ID: ${state.user['ID Warga'] || '-'}</p>
-          <p class="text-xs opacity-90 mt-0.5"><i class="ph ph-house"></i> Rumah No. ${state.user['No Rumah'] || '-'}</p>
+  if (!state.user) return;
+  const myId = state.user['ID Warga'];
+  const mySaldo = calculateSaldo(myId);
+  const roleLabel = state.user.role === 'superadmin' ? 'Superadmin' : (state.user.role === 'admin_istri' ? 'Admin Istri' : (state.user.role === 'admin_suami' ? 'Admin Suami' : 'Warga'));
+
+  // --- HITUNG TUNGGAKAN ---
+  const tunggakanSaya = state.data.tunggakan.filter(t => t['ID Warga'] === myId);
+  const jumlahBulanMenunggak = tunggakanSaya.length;
+  const totalTunggakan = tunggakanSaya.reduce((sum, t) => sum + Number(t['Iuran']||0) + Number(t['Arisan']||0), 0);
+
+  const profileHtml = `
+    <div class="bg-gradient-to-br from-primary to-primary-dark p-5 md:p-6 rounded-2xl shadow-md text-white relative overflow-hidden flex flex-col sm:flex-row gap-4 mb-2 mt-2">
+      <div class="absolute -right-6 -top-6 opacity-10"><i class="ph ph-user-circle" style="font-size: 150px;"></i></div>
+      <div class="z-10 flex flex-col items-center gap-2">
+        <div class="flex-shrink-0">${avatarMarkup(state.user, 'h-20 w-20 md:h-24 md:w-24')}</div>
+        <button onclick="openModal('modal-profile')" class="bg-white/15 hover:bg-white/25 text-white border border-white/25 px-4 py-2 rounded-xl text-sm font-medium flex items-center justify-center gap-2 transition-colors w-full" style="min-width: 5rem; max-width: 6rem;">
+          <i class="ph ph-user-circle-gear text-lg"></i> Edit
+        </button>
+      </div>
+      <div class="flex-1 z-10 w-full min-w-0">
+        <div class="flex flex-wrap items-center gap-2 mb-2">
+          <p class="text-white/80 text-[10px] uppercase font-bold tracking-wide">Profil ${roleLabel}</p>
+          <span class="text-[10px] uppercase font-bold bg-white/15 border border-white/20 px-2 py-0.5 rounded-full">${roleLabel}</span>
         </div>
-        <div class="z-10 flex flex-col gap-2 sm:items-end">
-          <div class="bg-white text-gray-800 p-4 rounded-xl shadow-lg text-center min-w-[150px]">
-            <p class="text-[10px] font-bold text-gray-500 uppercase">Tabungan Istri</p>
-            <p class="text-xl font-bold text-primary">${formatRupiah(mySaldo)}</p>
+        <h3 class="text-2xl font-bold mb-1 truncate">${state.user['Nama Suami'] || '-'}</h3>
+        <p class="text-xs opacity-90">Istri: ${state.user['Nama Istri'] || '-'}</p>
+        <p class="text-xs opacity-90 mt-0.5"><i class="ph ph-identification-card"></i> ID: ${state.user['ID Warga'] || '-'}</p>
+        <p class="text-xs opacity-90 mt-0.5"><i class="ph ph-house"></i> Rumah No. ${state.user['No Rumah'] || '-'}</p>
+      </div>
+      <div class="z-10 flex flex-col gap-2 sm:items-end">
+        <div class="bg-white text-gray-800 p-4 rounded-xl shadow-lg text-center min-w-[150px]">
+          <p class="text-[10px] font-bold text-gray-500 uppercase">Tabungan Istri</p>
+          <p class="text-xl font-bold text-primary">${formatRupiah(mySaldo)}</p>
+        </div>
+        ${state.user.role !== 'superadmin' ? `
+        <div class="bg-white/10 backdrop-blur-sm p-3 rounded-xl text-sm text-white">
+          <div class="flex justify-between gap-4">
+            <span class="text-white/70">Tunggakan:</span>
+            <span class="font-bold">${jumlahBulanMenunggak} bulan</span>
           </div>
-          ${state.user.role !== 'superadmin' ? `
-          <div class="bg-white/10 backdrop-blur-sm p-3 rounded-xl text-sm text-white">
-            <div class="flex justify-between gap-4">
-              <span class="text-white/70">Tunggakan:</span>
-              <span class="font-bold">${jumlahBulanMenunggak} bulan</span>
-            </div>
-            ${totalTunggakan > 0 ? `
-            <div class="flex justify-between gap-4 mt-1">
-              <span class="text-white/70">Total:</span>
-              <span class="font-bold text-warning">${formatRupiah(totalTunggakan)}</span>
-            </div>` : ''}
+          ${totalTunggakan > 0 ? `
+          <div class="flex justify-between gap-4 mt-1">
+            <span class="text-white/70">Total:</span>
+            <span class="font-bold text-warning">${formatRupiah(totalTunggakan)}</span>
           </div>` : ''}
-          <button onclick="openModal('modal-profile')" class="bg-white/15 hover:bg-white/25 text-white border border-white/25 px-4 py-2 rounded-xl text-sm font-medium flex items-center justify-center gap-2 transition-colors">
-            <i class="ph ph-user-circle-gear text-lg"></i> Edit Profil
-          </button>
+        </div>` : ''}
+      </div>
+    </div>`;
+  document.getElementById('profile-card').innerHTML = profileHtml;
+  document.getElementById('profile-card').classList.remove('hidden');
+  document.getElementById('dash-title').innerText = state.user.role === 'superadmin' ? 'Dashboard Superadmin' : (state.user.role === 'admin_istri' ? 'Dashboard Admin Istri' : (state.user.role === 'admin_suami' ? 'Dashboard Admin Suami' : 'Beranda Warga'));
+
+  const mutasiDiv = document.getElementById('dashboard-mutasi');
+  if (state.user.role !== 'superadmin') {
+    const myTransaksi = state.data.transaksi.filter(t => String(t['ID Anggota']) === String(myId)).sort((a,b) => new Date(b['Tanggal']) - new Date(a['Tanggal']));
+    const sortedAsc = [...myTransaksi].sort((a,b) => new Date(a['Tanggal']) - new Date(b['Tanggal']));
+    let saldo = 0;
+    const saldoMap = new Map();
+    sortedAsc.forEach(t => {
+      const isSetoran = t['Jenis Transaksi'] === 'Setoran';
+      const nominal = Number(t['Nominal']);
+      saldo += isSetoran ? nominal : -nominal;
+      saldoMap.set(t['ID Transaksi'], saldo);
+    });
+    const recentSorted = [...myTransaksi].sort((a,b) => new Date(b['Tanggal']) - new Date(a['Tanggal'])).slice(0,5);
+    let html = `
+      <div class="bg-white dark:bg-darkcard rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-4 md:p-5 mt-6">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-bold text-gray-700 dark:text-gray-200 text-sm md:text-base">Riwayat Tabungan Istri</h3>
+          ${canAccess('buku') ? `<button onclick="navigate('buku')" class="text-xs text-primary hover:underline">Lihat Buku Tabungan</button>` : ''}
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs md:text-sm whitespace-nowrap min-w-[600px]">
+            <thead class="bg-gray-50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
+              <tr><th class="p-2 font-medium">Tanggal</th><th class="p-2 font-medium">Keterangan</th><th class="p-2 font-medium text-right">Debit</th><th class="p-2 font-medium text-right">Kredit</th><th class="p-2 font-medium text-right">Saldo</th></tr>
+            </thead>
+            <tbody>
+              ${recentSorted.length === 0 ? '<tr><td colspan="5" class="p-4 text-center text-gray-500 italic">Belum ada mutasi</td></tr>' : ''}
+              ${recentSorted.map(t => {
+                const isSetoran = t['Jenis Transaksi'] === 'Setoran';
+                const nominal = Number(t['Nominal']);
+                const saldoSaatIni = saldoMap.get(t['ID Transaksi']);
+                return `<tr class="border-b border-gray-100 dark:border-gray-800">
+                  <td class="p-2 text-gray-600">${formatDateTime(t['Tanggal'])}</td>
+                  <td class="p-2"><span class="text-[10px] font-bold uppercase ${isSetoran?'text-success':'text-danger'}">${t['Jenis Transaksi']}</span><br><span class="text-xs">${t['Keterangan']||'-'}</span></td>
+                  <td class="p-2 text-right text-success">${isSetoran ? formatRupiah(nominal) : '-'}</td>
+                  <td class="p-2 text-right text-danger">${!isSetoran ? formatRupiah(nominal) : '-'}</td>
+                  <td class="p-2 text-right font-bold">${formatRupiah(saldoSaatIni)}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
         </div>
       </div>`;
-    document.getElementById('profile-card').innerHTML = profileHtml;
-    document.getElementById('profile-card').classList.remove('hidden');
-    document.getElementById('dash-title').innerText = state.user.role === 'superadmin' ? 'Dashboard Superadmin' : (state.user.role === 'admin_istri' ? 'Dashboard Admin Istri' : (state.user.role === 'admin_suami' ? 'Dashboard Admin Suami' : 'Beranda Warga'));
-
-    const mutasiDiv = document.getElementById('dashboard-mutasi');
-    if (state.user.role !== 'superadmin') {
-      const myTransaksi = state.data.transaksi.filter(t => String(t['ID Anggota']) === String(myId)).sort((a,b) => new Date(b['Tanggal']) - new Date(a['Tanggal']));
-      const sortedAsc = [...myTransaksi].sort((a,b) => new Date(a['Tanggal']) - new Date(b['Tanggal']));
-      let saldo = 0;
-      const saldoMap = new Map();
-      sortedAsc.forEach(t => {
-        const isSetoran = t['Jenis Transaksi'] === 'Setoran';
-        const nominal = Number(t['Nominal']);
-        saldo += isSetoran ? nominal : -nominal;
-        saldoMap.set(t['ID Transaksi'], saldo);
-      });
-      const recentSorted = [...myTransaksi].sort((a,b) => new Date(b['Tanggal']) - new Date(a['Tanggal'])).slice(0,5);
-      let html = `
-        <div class="bg-white dark:bg-darkcard rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-4 md:p-5 mt-6">
-          <div class="flex justify-between items-center mb-4">
-            <h3 class="font-bold text-gray-700 dark:text-gray-200 text-sm md:text-base">Riwayat Mutasi Terakhir</h3>
-            ${canAccess('buku') ? `<button onclick="navigate('buku')" class="text-xs text-primary hover:underline">Lihat Buku Tabungan</button>` : ''}
-          </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs md:text-sm whitespace-nowrap min-w-[600px]">
-              <thead class="bg-gray-50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
-                <tr><th class="p-2 font-medium">Tanggal</th><th class="p-2 font-medium">Keterangan</th><th class="p-2 font-medium text-right">Debit</th><th class="p-2 font-medium text-right">Kredit</th><th class="p-2 font-medium text-right">Saldo</th></tr>
-              </thead>
-              <tbody>
-                ${recentSorted.length === 0 ? '<tr><td colspan="5" class="p-4 text-center text-gray-500 italic">Belum ada mutasi</td></tr>' : ''}
-                ${recentSorted.map(t => {
-                  const isSetoran = t['Jenis Transaksi'] === 'Setoran';
-                  const nominal = Number(t['Nominal']);
-                  const saldoSaatIni = saldoMap.get(t['ID Transaksi']);
-                  return `<tr class="border-b border-gray-100 dark:border-gray-800">
-                    <td class="p-2 text-gray-600">${formatDateTime(t['Tanggal'])}</td>
-                    <td class="p-2"><span class="text-[10px] font-bold uppercase ${isSetoran?'text-success':'text-danger'}">${t['Jenis Transaksi']}</span><br><span class="text-xs">${t['Keterangan']||'-'}</span></td>
-                    <td class="p-2 text-right text-success">${isSetoran ? formatRupiah(nominal) : '-'}</td>
-                    <td class="p-2 text-right text-danger">${!isSetoran ? formatRupiah(nominal) : '-'}</td>
-                    <td class="p-2 text-right font-bold">${formatRupiah(saldoSaatIni)}</td>
-                  </tr>`;
-                }).join('')}
-              </tbody>
-            </table>
-          </div>
-        </div>`;
-      mutasiDiv.innerHTML = html;
-      mutasiDiv.style.display = 'block';
-    } else {
-      mutasiDiv.style.display = 'none';
-    }
-
-    const adminContainer = document.getElementById('admin-container');
-    if (state.user.role === 'superadmin') {
-      adminContainer.style.display = 'block';
-      let saldoKas=0, masuk=0, keluar=0;
-      const now = new Date();
-      const chartKasMasuk = Array(12).fill(0), chartKasKeluar = Array(12).fill(0);
-      state.data.kas.forEach(k => {
-        if(!k.Tanggal) return;
-        const tgl = new Date(k.Tanggal); const m = tgl.getMonth(); const nom = Number(k.Nominal)||0;
-        if(k.Jenis==='Pemasukan') {
-          saldoKas+=nom; chartKasMasuk[m]+=nom;
-          if(m===now.getMonth() && tgl.getFullYear()===now.getFullYear()) masuk+=nom;
-        } else {
-          saldoKas-=nom; chartKasKeluar[m]+=nom;
-          if(m===now.getMonth() && tgl.getFullYear()===now.getFullYear()) keluar+=nom;
-        }
-      });
-
-      document.getElementById('dashboard-stats').innerHTML = `
-        <div class="bg-white dark:bg-darkcard p-4 rounded-2xl shadow-sm border"><p class="text-xs text-gray-500">Total Warga</p><h3 class="text-xl font-bold">${state.data.warga.length}</h3></div>
-        <div class="bg-white dark:bg-darkcard p-4 rounded-2xl shadow-sm border"><p class="text-xs text-gray-500">Saldo Kas</p><h3 class="text-xl font-bold text-primary">${formatRupiah(saldoKas)}</h3></div>
-        <div class="bg-white dark:bg-darkcard p-4 rounded-2xl shadow-sm border"><p class="text-xs text-gray-500">Masuk Bulan Ini</p><h3 class="text-xl font-bold text-success">${formatRupiah(masuk)}</h3></div>
-        <div class="bg-white dark:bg-darkcard p-4 rounded-2xl shadow-sm border"><p class="text-xs text-gray-500">Keluar Bulan Ini</p><h3 class="text-xl font-bold text-danger">${formatRupiah(keluar)}</h3></div>
-      `;
-      const ctx1 = document.getElementById('chartTransaksi');
-      if(ctx1) {
-        if(chartInstance) chartInstance.destroy();
-        let st=0, pt=0;
-        state.data.transaksi.forEach(t => { let n = Number(t['Nominal']); if(t['Jenis Transaksi']==='Setoran') st+=n; else pt+=n; });
-        chartInstance = new Chart(ctx1, { type: 'bar', data: { labels: ['Setoran','Penarikan'], datasets: [{ data: [st, pt], backgroundColor: ['#14B8A6','#DC2626'] }] }, options: { responsive: true, maintainAspectRatio: false } });
-      }
-      const ctx2 = document.getElementById('chartEkas');
-      if(ctx2) {
-        if(chartEkasInstance) chartEkasInstance.destroy();
-        chartEkasInstance = new Chart(ctx2, { type: 'line', data: { labels: ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'], datasets: [
-          { label: 'Pemasukan', data: chartKasMasuk, borderColor: '#16A34A', backgroundColor: 'rgba(22,163,74,0.1)', tension: 0.3, fill: true },
-          { label: 'Pengeluaran', data: chartKasKeluar, borderColor: '#DC2626', backgroundColor: 'rgba(220,38,38,0.1)', tension: 0.3, fill: true }
-        ] }, options: { responsive: true, maintainAspectRatio: false } });
-      }
-    } else {
-      adminContainer.style.display = 'none';
-      if(chartInstance) { chartInstance.destroy(); chartInstance = null; }
-      if(chartEkasInstance) { chartEkasInstance.destroy(); chartEkasInstance = null; }
-    }
+    mutasiDiv.innerHTML = html;
+    mutasiDiv.style.display = 'block';
+  } else {
+    mutasiDiv.style.display = 'none';
   }
+
+  const adminContainer = document.getElementById('admin-container');
+  if (state.user.role === 'superadmin') {
+    adminContainer.style.display = 'block';
+    let saldoKas=0, masuk=0, keluar=0;
+    const now = new Date();
+    const chartKasMasuk = Array(12).fill(0), chartKasKeluar = Array(12).fill(0);
+    state.data.kas.forEach(k => {
+      if(!k.Tanggal) return;
+      const tgl = new Date(k.Tanggal); const m = tgl.getMonth(); const nom = Number(k.Nominal)||0;
+      if(k.Jenis==='Pemasukan') {
+        saldoKas+=nom; chartKasMasuk[m]+=nom;
+        if(m===now.getMonth() && tgl.getFullYear()===now.getFullYear()) masuk+=nom;
+      } else {
+        saldoKas-=nom; chartKasKeluar[m]+=nom;
+        if(m===now.getMonth() && tgl.getFullYear()===now.getFullYear()) keluar+=nom;
+      }
+    });
+
+    document.getElementById('dashboard-stats').innerHTML = `
+      <div class="bg-white dark:bg-darkcard p-4 rounded-2xl shadow-sm border"><p class="text-xs text-gray-500">Total Warga</p><h3 class="text-xl font-bold">${state.data.warga.length}</h3></div>
+      <div class="bg-white dark:bg-darkcard p-4 rounded-2xl shadow-sm border"><p class="text-xs text-gray-500">Saldo Kas</p><h3 class="text-xl font-bold text-primary">${formatRupiah(saldoKas)}</h3></div>
+      <div class="bg-white dark:bg-darkcard p-4 rounded-2xl shadow-sm border"><p class="text-xs text-gray-500">Masuk Bulan Ini</p><h3 class="text-xl font-bold text-success">${formatRupiah(masuk)}</h3></div>
+      <div class="bg-white dark:bg-darkcard p-4 rounded-2xl shadow-sm border"><p class="text-xs text-gray-500">Keluar Bulan Ini</p><h3 class="text-xl font-bold text-danger">${formatRupiah(keluar)}</h3></div>
+    `;
+    const ctx1 = document.getElementById('chartTransaksi');
+    if(ctx1) {
+      if(chartInstance) chartInstance.destroy();
+      let st=0, pt=0;
+      state.data.transaksi.forEach(t => { let n = Number(t['Nominal']); if(t['Jenis Transaksi']==='Setoran') st+=n; else pt+=n; });
+      chartInstance = new Chart(ctx1, { type: 'bar', data: { labels: ['Setoran','Penarikan'], datasets: [{ data: [st, pt], backgroundColor: ['#14B8A6','#DC2626'] }] }, options: { responsive: true, maintainAspectRatio: false } });
+    }
+    const ctx2 = document.getElementById('chartEkas');
+    if(ctx2) {
+      if(chartEkasInstance) chartEkasInstance.destroy();
+      chartEkasInstance = new Chart(ctx2, { type: 'line', data: { labels: ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'], datasets: [
+        { label: 'Pemasukan', data: chartKasMasuk, borderColor: '#16A34A', backgroundColor: 'rgba(22,163,74,0.1)', tension: 0.3, fill: true },
+        { label: 'Pengeluaran', data: chartKasKeluar, borderColor: '#DC2626', backgroundColor: 'rgba(220,38,38,0.1)', tension: 0.3, fill: true }
+      ] }, options: { responsive: true, maintainAspectRatio: false } });
+    }
+  } else {
+    adminContainer.style.display = 'none';
+    if(chartInstance) { chartInstance.destroy(); chartInstance = null; }
+    if(chartEkasInstance) { chartEkasInstance.destroy(); chartEkasInstance = null; }
+  }
+}
 
   // ===================== E-KAS (WARGA) =====================
   window.ekas = {
