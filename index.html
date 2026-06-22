@@ -1535,8 +1535,22 @@ kas: {
       <button onclick="window.ekas.kas.cetakPDF()" class="bg-gray-800 hover:bg-gray-900 text-white px-3 py-2 rounded-xl text-xs font-medium flex items-center shadow-md transition-colors"><i class="ph ph-printer text-sm mr-1"></i> Cetak</button>
     ` : '';
 
+    // Atur header sesuai role
+    const thead = document.querySelector('#kas-table thead');
+    if (thead) {
+      thead.innerHTML = `
+        <tr>
+          <th class="px-6 py-4">Tanggal</th>
+          <th class="px-6 py-4">Kategori</th>
+          <th class="px-6 py-4">Keterangan</th>
+          <th class="px-6 py-4 text-right">Nominal</th>
+          ${canEdit ? '<th class="px-6 py-4 text-right">Aksi</th>' : ''}
+        </tr>`;
+    }
+
     if(kas.length===0) { 
-      tb.innerHTML = '<tr><td colspan="5" class="px-6 py-10 text-center text-gray-500">Belum ada transaksi.</td></tr>'; 
+      const colspan = canEdit ? 5 : 4;
+      tb.innerHTML = `<tr><td colspan="${colspan}" class="px-6 py-10 text-center text-gray-500">Belum ada transaksi.</td></tr>`; 
       tf.innerHTML = '';
     } else {
       tb.innerHTML = kas.map(k => {
@@ -1556,7 +1570,7 @@ kas: {
       }).join('');
     }
 
-    // Footer ringkasan (tanpa kolom aksi)
+    // Footer tetap 4 kolom (tidak ada kolom aksi)
     let totalMasuk = 0, totalKeluar = 0;
     kas.forEach(k => { const nom = Number(k.Nominal)||0; if (k.Jenis === 'Pemasukan') totalMasuk += nom; else totalKeluar += nom; });
     const surplus = totalMasuk - totalKeluar;
@@ -1587,25 +1601,6 @@ kas: {
         <td class="px-6 py-3 text-right text-warning">${formatRupiah(totalTunggakan)}</td>
       </tr>
     `;
-
-    // Sembunyikan kolom aksi di header jika tidak bisa edit
-    const theadRow = document.querySelector('#kas-table thead tr');
-    if (theadRow) {
-      // Selalu hapus kolom aksi dari header jika tidak bisa edit, jika bisa edit pastikan kolom aksi ada (default template sudah ada)
-      if (!canEdit) {
-        // Hapus kolom terakhir (Aksi) dari header
-        if (theadRow.cells.length >= 5) theadRow.deleteCell(4); // indeks 4 adalah kolom Aksi (0:Tanggal,1:Kategori,2:Keterangan,3:Nominal,4:Aksi)
-      } else {
-        // Jika bisa edit, pastikan header memiliki kolom Aksi (mungkin sebelumnya dihapus, tapi karena render ulang dari template, seharusnya sudah ada lagi)
-        if (theadRow.cells.length < 5) {
-          // Tambahkan kembali jika kurang (tidak seharusnya terjadi)
-          const th = document.createElement('th');
-          th.className = 'px-6 py-4 text-right';
-          th.textContent = 'Aksi';
-          theadRow.appendChild(th);
-        }
-      }
-    }
   }
 }
       openModal(jenis, id=null) {
