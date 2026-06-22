@@ -483,13 +483,14 @@
   const normalizeRole = (role) => String(role || 'user').toLowerCase() === 'admin' ? 'admin' : 'user';
   const toNumber = (value) => { const n = Number(value); return Number.isFinite(n) ? n : 0; };
   const formatRupiah = (angka) => 'Rp ' + toNumber(angka).toLocaleString('id-ID');
-  const formatDateTime = (iso) => {
+const formatDateTime = (iso) => {
     if (!iso) return '-';
     const d = new Date(iso);
     if (Number.isNaN(d.getTime())) return '-';
     const pad = (n) => n.toString().padStart(2, '0');
-    return `${pad(d.getDate())}-${pad(d.getMonth() + 1)}-${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-  };
+    const yy = String(d.getFullYear()).slice(-2);
+    return `${pad(d.getDate())}-${pad(d.getMonth() + 1)}-${yy} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
   const calculateSaldo = (id) => state.data.transaksi.filter(t=>String(t['ID Anggota'])===String(id)).reduce((s, t) => t['Jenis Transaksi'] === 'Setoran' ? s + toNumber(t['Nominal']) : s - toNumber(t['Nominal']), 0);
   const persistSession = () => { if (!state.user) return; writeStorage('app_session', JSON.stringify({ user: state.user, savedAt: Date.now() })); };
   const clearSession = () => removeStorage('app_session');
@@ -1118,7 +1119,7 @@
           tb.innerHTML = pay.map(p => {
             const wName = state.data.warga.find(w=>w['ID Warga']===p.WargaID)?.['Nama Suami'] || p.WargaID;
             return `<tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors border-b border-gray-50">
-              <td class="px-5 py-3"><div class="font-bold">${wName}</div><div class="text-xs text-gray-500">${new Date(p.Tanggal).toLocaleDateString('id-ID')}</div></td>
+              <td class="px-5 py-3"><div class="font-bold">${wName}</div><div class="text-xs text-gray-500">${formatDateTime(p.Tanggal)}</div></td>
               <td class="px-5 py-3">${p.Bulan} ${p.Tahun}</td>
               <td class="px-5 py-3 text-xs">Iur:${p.Iuran} Ars:${p.Arisan} Tmb:${p.Tambahan}</td>
               <td class="px-5 py-3 font-black text-success">${formatRupiah(p.Total)}</td>
@@ -1440,7 +1441,7 @@
           tb.innerHTML = kas.map(k => {
             const isMasuk = k.Jenis==='Pemasukan';
             return `<tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors border-b border-gray-50">
-              <td class="px-6 py-4 text-xs text-gray-500">${new Date(k.Tanggal).toLocaleDateString('id-ID')}</td>
+              <td class="px-6 py-4 text-xs text-gray-500">${formatDateTime(k.Tanggal)}</td>
               <td class="px-6 py-4"><span class="px-3 py-1 rounded-full text-xs font-bold ${isMasuk?'bg-emerald-100 text-success':'bg-red-100 text-danger'}">${k.Kategori}</span></td>
               <td class="px-6 py-4 text-sm font-medium">${k.Keterangan}</td>
               <td class="px-6 py-4 text-right font-black ${isMasuk?'text-success':'text-danger'}">${isMasuk?'+':'-'}${formatRupiah(k.Nominal)}</td>
