@@ -1311,16 +1311,21 @@ const formatDateTime = (iso) => {
       },
 
       // ---------- TUNGGAKAN MULTI‑BULAN ----------
-      openTunggakanModal() {
-        if (!['superadmin','admin_suami'].includes(state.user.role)) return;
-        let opts = state.data.warga.map(w => `<option value="${w['ID Warga']}">${w['Nama Suami']} (${w['No Rumah']})</option>`).join('');
-        const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-        const tahun = new Date().getFullYear();
-        const checkboxes = months.map(m => `
-          <label class="flex items-center gap-2 p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg cursor-pointer">
+openTunggakanModal() {
+    if (!['superadmin','admin_suami'].includes(state.user.role)) return;
+    // Filter hanya warga aktif, urutkan berdasarkan Nama Suami (A-Z)
+    let opts = state.data.warga
+        .filter(w => String(w.Status || '').toLowerCase() === 'aktif')
+        .sort((a, b) => (a['Nama Suami'] || '').localeCompare(b['Nama Suami'] || ''))
+        .map(w => `<option value="${w['ID Warga']}">${w['Nama Suami']} (${w['No Rumah']})</option>`)
+        .join('');
+    const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+    const tahun = new Date().getFullYear();
+    const checkboxes = months.map(m => `
+        <label class="flex items-center gap-2 p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg cursor-pointer">
             <input type="checkbox" value="${m}" class="tung-bulan-cb rounded border-gray-300 text-primary focus:ring-primary">
             <span class="text-sm">${m}</span>
-          </label>`).join('');
+        </label>`).join('');
         
         document.getElementById('modals').innerHTML = `<div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div class="bg-white dark:bg-darkcard rounded-2xl w-[calc(100%-2rem)] max-w-md modal-animate overflow-hidden max-h-[90dvh] flex flex-col">
