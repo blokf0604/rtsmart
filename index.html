@@ -974,6 +974,104 @@
   </div>
 </template>
 
+<!-- Template: Modal Catat Tunggakan Manual -->
+<template id="tpl-modal-tunggakan">
+  <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-darkcard rounded-2xl w-[calc(100%-2rem)] max-w-md modal-animate overflow-hidden max-h-[90dvh] flex flex-col">
+      <div class="p-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
+        <h3 class="font-bold">Catat Tunggakan Manual</h3>
+        <button onclick="window.closeAllModals()" aria-label="Tutup">
+          <i class="ph ph-x text-lg" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="overflow-y-auto p-4 md:p-6 hide-scroll">
+        <form class="space-y-4" onsubmit="window.ekas.pembayaran.submitTunggakan(event)">
+          <div>
+            <label class="block text-xs font-medium mb-1">Pilih Warga</label>
+            <select id="tung-warga" required class="w-full p-2.5 rounded-xl border dark:border-gray-700 dark:bg-gray-900 text-sm" onchange="window.ekas.pembayaran.hitungNominalTunggakan()">
+              <option value="">-- Pilih Warga --</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">Tahun</label>
+            <input type="number" id="tung-tahun" value="2026" required class="w-full p-2.5 rounded-xl border dark:border-gray-700 dark:bg-gray-900 text-sm" onchange="window.ekas.pembayaran.hitungNominalTunggakan()">
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-2">Pilih Bulan (centang satu atau lebih)</label>
+            <div class="grid grid-cols-2 gap-1 max-h-40 overflow-y-auto border rounded-xl p-2 dark:border-gray-700" id="bulan-container">
+              <label class="flex items-center gap-2 p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg cursor-pointer"><input type="checkbox" value="Januari" class="tung-bulan-cb rounded border-gray-300 text-primary focus:ring-primary"><span class="text-sm">Januari</span></label>
+              <label class="flex items-center gap-2 p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg cursor-pointer"><input type="checkbox" value="Februari" class="tung-bulan-cb rounded border-gray-300 text-primary focus:ring-primary"><span class="text-sm">Februari</span></label>
+              <label class="flex items-center gap-2 p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg cursor-pointer"><input type="checkbox" value="Maret" class="tung-bulan-cb rounded border-gray-300 text-primary focus:ring-primary"><span class="text-sm">Maret</span></label>
+              <label class="flex items-center gap-2 p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg cursor-pointer"><input type="checkbox" value="April" class="tung-bulan-cb rounded border-gray-300 text-primary focus:ring-primary"><span class="text-sm">April</span></label>
+              <label class="flex items-center gap-2 p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg cursor-pointer"><input type="checkbox" value="Mei" class="tung-bulan-cb rounded border-gray-300 text-primary focus:ring-primary"><span class="text-sm">Mei</span></label>
+              <label class="flex items-center gap-2 p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg cursor-pointer"><input type="checkbox" value="Juni" class="tung-bulan-cb rounded border-gray-300 text-primary focus:ring-primary"><span class="text-sm">Juni</span></label>
+              <label class="flex items-center gap-2 p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg cursor-pointer"><input type="checkbox" value="Juli" class="tung-bulan-cb rounded border-gray-300 text-primary focus:ring-primary"><span class="text-sm">Juli</span></label>
+              <label class="flex items-center gap-2 p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg cursor-pointer"><input type="checkbox" value="Agustus" class="tung-bulan-cb rounded border-gray-300 text-primary focus:ring-primary"><span class="text-sm">Agustus</span></label>
+              <label class="flex items-center gap-2 p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg cursor-pointer"><input type="checkbox" value="September" class="tung-bulan-cb rounded border-gray-300 text-primary focus:ring-primary"><span class="text-sm">September</span></label>
+              <label class="flex items-center gap-2 p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg cursor-pointer"><input type="checkbox" value="Oktober" class="tung-bulan-cb rounded border-gray-300 text-primary focus:ring-primary"><span class="text-sm">Oktober</span></label>
+              <label class="flex items-center gap-2 p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg cursor-pointer"><input type="checkbox" value="November" class="tung-bulan-cb rounded border-gray-300 text-primary focus:ring-primary"><span class="text-sm">November</span></label>
+              <label class="flex items-center gap-2 p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg cursor-pointer"><input type="checkbox" value="Desember" class="tung-bulan-cb rounded border-gray-300 text-primary focus:ring-primary"><span class="text-sm">Desember</span></label>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-medium mb-1">Iuran Wajib/bulan (Rp)</label>
+              <input type="text" id="tung-iuran" class="w-full p-2.5 rounded-xl border dark:border-gray-700 dark:bg-gray-900 text-sm" value="0" oninput="formatInputRibuan(event)">
+            </div>
+            <div>
+              <label class="block text-xs font-medium mb-1">Arisan/bulan (Rp)</label>
+              <input type="text" id="tung-arisan" class="w-full p-2.5 rounded-xl border dark:border-gray-700 dark:bg-gray-900 text-sm" value="0" oninput="formatInputRibuan(event)">
+            </div>
+          </div>
+          <div id="tung-tambahan-container" class="hidden">
+            <label class="block text-xs font-medium mb-1">Biaya Tambahan/bulan (Rp)</label>
+            <input type="text" id="tung-tambahan" class="w-full p-2.5 rounded-xl border dark:border-gray-700 dark:bg-gray-900 text-sm" value="0" oninput="formatInputRibuan(event)">
+          </div>
+          <div class="bg-gray-100 dark:bg-gray-800 p-3 rounded-xl">
+            <p class="text-xs text-gray-500">Total untuk <span id="tung-jumlah-bulan">0</span> bulan: <span id="tung-total" class="font-bold text-primary">Rp0</span></p>
+          </div>
+          <div class="pt-4">
+            <button type="submit" class="w-full py-3 rounded-xl bg-warning hover:bg-amber-600 text-white font-medium text-sm">Simpan Tunggakan</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</template>
+
+<!-- Template: Modal Hapus Tunggakan -->
+<template id="tpl-modal-hapus-tunggakan">
+  <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-darkcard rounded-2xl w-[calc(100%-2rem)] max-w-lg modal-animate overflow-hidden max-h-[90dvh] flex flex-col">
+      <div class="p-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
+        <h3 class="font-bold">Hapus Tunggakan</h3>
+        <button onclick="window.closeAllModals()" aria-label="Tutup">
+          <i class="ph ph-x text-lg" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="overflow-y-auto p-4 hide-scroll">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm" id="tabel-hapus-tunggakan">
+            <thead class="bg-gray-50 dark:bg-gray-800/50 text-gray-500">
+              <tr>
+                <th class="p-2 w-8"><input type="checkbox" id="pilih-semua" class="rounded border-gray-300" title="Pilih Semua"></th>
+                <th class="p-2">ID</th>
+                <th class="p-2">Warga</th>
+                <th class="p-2">Periode</th>
+                <th class="p-2 text-right">Nominal</th>
+              </tr>
+            </thead>
+            <tbody id="table-hapus-tunggakan-body" class="divide-y divide-gray-100 dark:divide-gray-800"></tbody>
+          </table>
+        </div>
+        <button onclick="window.ekas.pembayaran.hapusTerpilih()" class="w-full mt-4 bg-danger hover:bg-red-700 text-white font-medium py-2.5 rounded-xl transition-colors">
+          <i class="ph ph-trash mr-2" aria-hidden="true"></i> Hapus Terpilih
+        </button>
+      </div>
+    </div>
+  </div>
+</template>
+
 <!-- ==================== OVERLAY CONTAINERS ==================== -->
 
 <!-- Modal Container -->
@@ -1086,7 +1184,6 @@ function recalculateSaldoMap() {
     const current = map.get(id) || 0;
     map.set(id, t['Jenis Transaksi'] === 'Setoran' ? current + nominal : current - nominal);
   });
-  // Pastikan semua warga ada di map meskipun saldonya 0
   state.data.warga.forEach(w => {
     const id = String(w['ID Warga']);
     if (!map.has(id)) map.set(id, 0);
@@ -1848,7 +1945,7 @@ async function deleteTransaksi(id) {
 }
 </script>
 
-<!-- ==================== JAVASCRIPT: PEMBAYARAN ==================== -->
+<!-- ==================== JAVASCRIPT: PEMBAYARAN & TUNGGAKAN ==================== -->
 <script>
 window.ekas.pembayaran = {
   render() {
@@ -1870,9 +1967,20 @@ window.ekas.pembayaran = {
     if(pay.length===0) { const colspan = canEdit?5:4; tb.innerHTML = `<tr><td colspan="${colspan}" class="px-5 py-10 text-center text-gray-500">Belum ada pembayaran.</td></tr>`; }
     else tb.innerHTML = pay.map(p=>{ const wName = state.data.warga.find(w=>w['ID Warga']===p.WargaID)?.['Nama Suami']||p.WargaID; return `<tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors border-b border-gray-50"><td class="px-5 py-3"><div class="font-bold">${escHtml(wName)}</div><div class="text-xs text-gray-500">${formatDateTime(p.Tanggal)}</div></td><td class="px-5 py-3">${escHtml(p.Bulan)} ${escHtml(p.Tahun)}</td><td class="px-5 py-3 text-xs">Iur:${escHtml(p.Iuran)} Ars:${escHtml(p.Arisan)} Tmb:${escHtml(p.Tambahan)}</td><td class="px-5 py-3 font-black text-success">${formatRupiah(p.Total)}</td>${canEdit?`<td class="px-5 py-3 text-right space-x-1"><button onclick="window.ekas.pembayaran.openEdit('${escHtml(p.PayID)}')" class="text-blue-500 bg-blue-50 p-2 rounded-lg" title="Edit" aria-label="Edit Pembayaran"><i class="ph ph-pencil-simple" aria-hidden="true"></i></button><button onclick="window.ekas.pembayaran.delete('${escHtml(p.PayID)}')" class="text-danger bg-red-50 p-2 rounded-lg" title="Hapus" aria-label="Hapus Pembayaran"><i class="ph ph-trash" aria-hidden="true"></i></button></td>`:''}</tr>`; }).join('');
     
+    // Tiga tombol aksi tunggakan
     const btnsDiv = document.getElementById('pembayaran-tunggakan-btns');
-    if(btnsDiv && ['superadmin','admin_suami'].includes(state.user.role)) btnsDiv.innerHTML = `<button onclick="window.ekas.pembayaran.updateSemuaTunggakan()" class="w-full bg-primary hover:bg-primary-dark text-white px-3 py-2 rounded-xl font-medium text-sm shadow-sm transition-colors mt-1" aria-label="Update Tunggakan Bulan Ini"><i class="ph ph-arrows-clockwise mr-1" aria-hidden="true"></i> Update Tunggakan Bulan Ini</button>`;
-    else if(btnsDiv) btnsDiv.innerHTML = '';
+    if(btnsDiv && ['superadmin','admin_suami'].includes(state.user.role)) {
+      btnsDiv.innerHTML = `
+        <button onclick="window.ekas.pembayaran.openTunggakanModal()" class="flex-1 bg-warning hover:bg-amber-600 text-white px-3 py-2 rounded-xl font-medium text-sm shadow-sm transition-colors" aria-label="Catat Tunggakan Manual">
+          <i class="ph ph-clock-counter-clockwise mr-1" aria-hidden="true"></i> Catat Tunggakan
+        </button>
+        <button onclick="window.ekas.pembayaran.openHapusTunggakanModal()" class="flex-1 bg-danger hover:bg-red-700 text-white px-3 py-2 rounded-xl font-medium text-sm shadow-sm transition-colors" aria-label="Hapus Tunggakan">
+          <i class="ph ph-trash mr-1" aria-hidden="true"></i> Hapus Tunggakan
+        </button>
+        <button onclick="window.ekas.pembayaran.updateSemuaTunggakan()" class="w-full bg-primary hover:bg-primary-dark text-white px-3 py-2 rounded-xl font-medium text-sm shadow-sm transition-colors mt-1" aria-label="Update Tunggakan Bulan Ini">
+          <i class="ph ph-arrows-clockwise mr-1" aria-hidden="true"></i> Update Tunggakan Bulan Ini
+        </button>`;
+    } else if(btnsDiv) btnsDiv.innerHTML = '';
   },
   openEdit(payId) {
     const p = state.data.pembayaran.find(x=>x.PayID===payId); if(!p) return;
@@ -1906,7 +2014,170 @@ window.ekas.pembayaran = {
     else showToast(res.message,'error');
   },
   async delete(id) { if(!(await showConfirmDialog('Hapus pembayaran ini? Data terkait di Buku Kas juga akan dihapus.'))) return; showLoading(); const res = await fetchAPI('delete_pembayaran',{id}); hideLoading(); if(res.success){await loadData();showToast('Dihapus');}else showToast(res.message,'error'); },
-  async updateSemuaTunggakan(){const ok=await showConfirmDialog('Tambahkan tunggakan untuk bulan ini kepada semua warga yang memiliki kewajiban?',{confirmText:'Update',cancelText:'Batal'});if(!ok)return;showLoading();const res=await fetchAPI('update_tunggakan_bulan_ini',{});hideLoading();if(res.success){await loadData();showToast(res.message||'Tunggakan bulan ini ditambahkan');}else showToast(res.message,'error');}
+  
+  // ==================== TUNGGAKAN MANUAL ====================
+  openTunggakanModal() {
+    if(!['superadmin','admin_suami'].includes(state.user.role)) return;
+    ModalHelper.open('tpl-modal-tunggakan', () => {
+      // Isi dropdown warga
+      const sel = document.getElementById('tung-warga');
+      sel.innerHTML = '<option value="">-- Pilih Warga --</option>' + 
+        state.data.warga.filter(w=>String(w.Status||'').toLowerCase()==='aktif')
+        .sort((a,b)=>(a['Nama Suami']||'').localeCompare(b['Nama Suami']||''))
+        .map(w=>`<option value="${escHtml(w['ID Warga'])}">${escHtml(w['Nama Suami'])} (${escHtml(w['No Rumah'])})</option>`).join('');
+      
+      // Set tahun default
+      document.getElementById('tung-tahun').value = new Date().getFullYear();
+      
+      // Attach event listener untuk checkbox bulan
+      document.getElementById('bulan-container').addEventListener('change', () => {
+        window.ekas.pembayaran.updateTotalTunggakan();
+      });
+      
+      // Hitung nominal awal
+      window.ekas.pembayaran.hitungNominalTunggakan();
+    });
+  },
+  
+  hitungNominalTunggakan() {
+    const wId = document.getElementById('tung-warga')?.value;
+    const w = wId ? state.data.warga.find(x=>x['ID Warga']===wId) : null;
+    let iuran = 0, arisan = 0, tambahan = 0;
+    
+    if(w) {
+      if(w['Bayar Iuran?']==='YA') iuran = Number(state.data.settings['Iuran Wajib']||0);
+      if(w['Ikut Arisan?']==='YA') arisan = (Number(w['Slot Arisan'])||0) * (Number(state.data.settings['Arisan Per Slot']||0));
+      state.data.biaya.filter(b=>b.WargaID===wId).forEach(b=>tambahan+=Number(b.Nominal));
+    }
+    
+    const iuranInput = document.getElementById('tung-iuran');
+    const arisanInput = document.getElementById('tung-arisan');
+    const tambahanContainer = document.getElementById('tung-tambahan-container');
+    const tambahanInput = document.getElementById('tung-tambahan');
+    
+    if(iuranInput) { iuranInput.value = formatAngkaInput(iuran); iuranInput.dataset.value = iuran; }
+    if(arisanInput) { arisanInput.value = formatAngkaInput(arisan); arisanInput.dataset.value = arisan; }
+    
+    if(tambahan > 0) {
+      if(tambahanContainer) tambahanContainer.classList.remove('hidden');
+      if(tambahanInput) { tambahanInput.value = formatAngkaInput(tambahan); tambahanInput.dataset.value = tambahan; }
+    } else {
+      if(tambahanContainer) tambahanContainer.classList.add('hidden');
+      if(tambahanInput) { tambahanInput.value = '0'; tambahanInput.dataset.value = 0; }
+    }
+    
+    this.updateTotalTunggakan();
+  },
+  
+  updateTotalTunggakan() {
+    const checked = document.querySelectorAll('.tung-bulan-cb:checked').length;
+    const iuran = toNumber(document.getElementById('tung-iuran')?.dataset?.value || 0);
+    const arisan = toNumber(document.getElementById('tung-arisan')?.dataset?.value || 0);
+    const tambahan = toNumber(document.getElementById('tung-tambahan')?.dataset?.value || 0);
+    const total = (iuran + arisan + tambahan) * checked;
+    
+    const jumlahEl = document.getElementById('tung-jumlah-bulan');
+    const totalEl = document.getElementById('tung-total');
+    if(jumlahEl) jumlahEl.innerText = checked;
+    if(totalEl) totalEl.innerText = formatRupiah(total);
+  },
+  
+  async submitTunggakan(e) {
+    e.preventDefault();
+    const wId = document.getElementById('tung-warga').value;
+    const tahun = Number(document.getElementById('tung-tahun').value);
+    const checked = [...document.querySelectorAll('.tung-bulan-cb:checked')].map(cb=>cb.value);
+    
+    if(!wId || checked.length===0) return showToast('Pilih warga dan minimal satu bulan!','error');
+    
+    const iuran = toNumber(document.getElementById('tung-iuran').dataset?.value || 0);
+    const arisan = toNumber(document.getElementById('tung-arisan').dataset?.value || 0);
+    const tambahan = toNumber(document.getElementById('tung-tambahan')?.dataset?.value || 0);
+    
+    showLoading();
+    let success = true;
+    for(const bulan of checked) {
+      const res = await fetchAPI('save_tunggakan_manual', { wargaId: wId, bulan, tahun, iuran, arisan, tambahan });
+      if(!res.success) {
+        success = false;
+        showToast(res.message + ' (' + bulan + ')', 'error');
+        break;
+      }
+    }
+    hideLoading();
+    
+    if(success) {
+      window.closeAllModals();
+      await loadData();
+      showToast(checked.length + ' tunggakan berhasil dicatat');
+    }
+  },
+  
+  // ==================== HAPUS TUNGGAKAN ====================
+  openHapusTunggakanModal() {
+    if(!['superadmin','admin_suami'].includes(state.user.role)) return;
+    const list = state.data.tunggakan || [];
+    if(list.length === 0) {
+      showToast('Tidak ada data tunggakan', 'error');
+      return;
+    }
+    
+    ModalHelper.open('tpl-modal-hapus-tunggakan', () => {
+      const tbody = document.getElementById('table-hapus-tunggakan-body');
+      tbody.innerHTML = list.map(t => {
+        const w = state.data.warga.find(x=>x['ID Warga']===t['ID Warga']);
+        const nama = w ? w['Nama Suami'] : t['ID Warga'];
+        return `<tr class="border-b border-gray-100 dark:border-gray-800">
+          <td class="p-2"><input type="checkbox" class="tung-hapus-cb rounded border-gray-300" value="${escHtml(t['ID Tunggakan'])}"></td>
+          <td class="p-2 text-xs">${escHtml(t['ID Tunggakan'])}</td>
+          <td class="p-2 font-medium">${escHtml(nama)}</td>
+          <td class="p-2">${escHtml(t['Bulan'])} ${escHtml(t['Tahun'])}</td>
+          <td class="p-2 text-right">${formatRupiah(Number(t['Iuran'])+Number(t['Arisan']))}</td>
+        </tr>`;
+      }).join('');
+      
+      // Select all checkbox
+      document.getElementById('pilih-semua').addEventListener('change', (e) => {
+        document.querySelectorAll('.tung-hapus-cb').forEach(cb => cb.checked = e.target.checked);
+      });
+    });
+  },
+  
+  async hapusTerpilih() {
+    const selected = [...document.querySelectorAll('.tung-hapus-cb:checked')].map(cb=>cb.value);
+    if(selected.length === 0) return showToast('Pilih tunggakan dulu!','error');
+    
+    const result = await showConfirmDialog('Hapus ' + selected.length + ' tunggakan terpilih?', {
+      confirmText: 'Hapus', cancelText: 'Batal', showCheckbox: true, checkboxLabel: 'Catat sebagai pemasukan di Buku Kas?'
+    });
+    
+    if(!result || !result.confirmed) return;
+    const catatPemasukan = result.checked;
+    
+    showLoading();
+    let allOk = true;
+    for(const id of selected) {
+      const res = await fetchAPI('delete_tunggakan', { id, catatPemasukan });
+      if(!res.success) { allOk = false; showToast(res.message, 'error'); break; }
+    }
+    hideLoading();
+    
+    if(allOk) {
+      window.closeAllModals();
+      await loadData();
+      showToast(selected.length + ' tunggakan dihapus' + (catatPemasukan ? ' dan pemasukan dicatat' : ''));
+    }
+  },
+  
+  async updateSemuaTunggakan() {
+    const ok = await showConfirmDialog('Tambahkan tunggakan untuk bulan ini kepada semua warga yang memiliki kewajiban?', { confirmText: 'Update', cancelText: 'Batal' });
+    if(!ok) return;
+    showLoading();
+    const res = await fetchAPI('update_tunggakan_bulan_ini', {});
+    hideLoading();
+    if(res.success) { await loadData(); showToast(res.message||'Tunggakan bulan ini ditambahkan'); }
+    else showToast(res.message, 'error');
+  }
 };
 </script>
 
